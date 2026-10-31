@@ -109,13 +109,15 @@
   transform: translateX(-120%);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .hero-zoom {
+    animation: hero-zoom 2.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
 @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
   .shimmer::after {
     animation: shimmer 3.8s ease-in-out infinite;
-  }
-
-  .hero-zoom {
-    animation: hero-zoom 26s ease-out forwards;
   }
 
   .page-rule {
@@ -157,6 +159,37 @@
   }
 }
 
+@media (hover: hover) and (pointer: fine) and (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .col-photo {
+    transition: transform 700ms ease;
+  }
+
+  .group:hover .col-photo,
+  .group:focus-visible .col-photo {
+    transform: scale(1.05);
+  }
+
+  .col-rule {
+    transform: scaleX(0);
+    transition: transform 700ms ease;
+  }
+
+  .group:hover .col-rule,
+  .group:focus-visible .col-rule {
+    transform: scaleX(1);
+  }
+}
+
+@media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+  .col-press {
+    transition: transform 160ms ease;
+  }
+
+  .col-card:active .col-press {
+    transform: scale(0.98);
+  }
+}
+
 @keyframes shimmer {
   0%,
   55% {
@@ -169,10 +202,10 @@
 
 @keyframes hero-zoom {
   from {
-    transform: scale(1);
+    transform: scale(1.08);
   }
   to {
-    transform: scale(1.06);
+    transform: scale(1);
   }
 }
 

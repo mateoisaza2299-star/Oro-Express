@@ -1,4 +1,3 @@
-import { site } from "../config.ts";
 import { mensajeGeneral, whatsappUrl } from "../lib/whatsapp.ts";
 import { scrollToId } from "../lib/scroll.ts";
 import { Picture } from "./Picture.tsx";
@@ -6,52 +5,56 @@ import { Reveal } from "./Reveal.tsx";
 
 export function Hero() {
   return (
-    <section id="inicio" className="relative min-h-[100svh] bg-ivory" data-testid="hero" aria-labelledby="titulo-principal">
-      <div className="absolute inset-0 overflow-hidden md:left-[46%]">
+    <section
+      id="inicio"
+      className="relative mt-16 bg-ivory lg:mt-[4.5rem] lg:h-[calc(100svh-4.5rem)]"
+      data-testid="hero"
+      aria-labelledby="titulo-principal"
+    >
+      <div className="relative h-[54svh] overflow-hidden lg:absolute lg:inset-0 lg:h-full">
         <Picture
           nombre="hero"
           alt="Collar de perlas y anillo con piedra clara sobre terciopelo verde, con cortinas claras al fondo."
-          sizes="(min-width: 768px) 58vw, 100vw"
+          sizes="100vw"
           priority
-          className="hero-zoom absolute inset-0 h-full w-full object-cover object-[76%_center]"
+          className="hero-zoom absolute inset-0 h-full w-full object-cover object-[72%_48%] lg:object-[58%_center]"
         />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ivory via-ivory/70 to-transparent lg:hidden" />
+        <div className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(90deg,#f3eee6_0%,rgba(243,238,230,0.94)_16%,rgba(243,238,230,0.72)_34%,rgba(243,238,230,0.28)_52%,transparent_68%)] lg:block" />
       </div>
-      <div className="relative z-10 flex min-h-[100svh] w-full flex-col justify-end md:w-[48%] md:border-r md:border-gold-line/40 md:bg-ivory md:px-12 md:pt-28 md:pb-20">
-        <div aria-hidden="true" className="h-20 bg-gradient-to-t from-ivory to-transparent md:hidden" />
-        <div className="bg-ivory px-5 pb-10 md:bg-transparent md:px-0 md:pb-0">
-          <p className="font-serif text-2xl text-gold italic">Para consulta</p>
-          <Reveal
-            as="h1"
-            id="titulo-principal"
-            inmediato
-            lines={["Una luz ", "que no apura"]}
-            className="mt-4 max-w-[12ch] font-serif text-[3.15rem] leading-[1.02] font-medium tracking-[-0.03em] text-ink md:text-[5.4rem]"
-          />
-          <p className="mt-6 max-w-sm text-base leading-relaxed text-muted">
-            Anillos, collares, aretes y pulseras. El precio y el material exacto se confirman en conversación.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a
-              href="#colecciones"
-              className="btn-shimmer inline-flex min-h-11 items-center bg-ink px-5 text-xs tracking-[0.18em] text-ivory uppercase"
-              onClick={(event) => {
-                event.preventDefault();
-                scrollToId("colecciones");
-              }}
-            >
-              <span className="relative z-10">Ver colecciones</span>
-              <span className="shimmer" aria-hidden="true" />
-            </a>
-            <a
-              href={whatsappUrl(mensajeGeneral())}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center border border-gold-line px-5 text-xs tracking-[0.16em] text-ink uppercase"
-            >
-              Escríbenos por WhatsApp
-            </a>
-          </div>
-          <p className="mt-8 text-xs tracking-[0.18em] text-gold uppercase">{site.nombre}</p>
+      <div className="relative z-10 flex flex-col px-5 pt-3 pb-4 lg:h-full lg:w-[min(58%,36rem)] lg:justify-center lg:px-10 lg:py-0 xl:px-14">
+        <p className="font-serif text-xl text-gold italic lg:text-2xl">Para consulta</p>
+        <Reveal
+          as="h1"
+          id="titulo-principal"
+          inmediato
+          siempre
+          lines={["Una luz ", "que no apura"]}
+          className="mt-3 max-w-[12ch] font-serif text-[clamp(2rem,7.4vw,2.65rem)] leading-[1.05] font-medium tracking-[-0.03em] text-ink lg:mt-4 lg:text-[clamp(3.25rem,4.4vw,4.75rem)]"
+        />
+        <p className="mt-4 max-w-sm text-base leading-snug text-muted lg:mt-6 lg:leading-relaxed">
+          Anillos, collares, aretes y pulseras. El precio y el material exacto se confirman en conversación.
+        </p>
+        <div className="mt-4 flex flex-col gap-3 lg:mt-8 lg:flex-row lg:flex-nowrap">
+          <a
+            href="#colecciones"
+            className="btn-shimmer inline-flex min-h-12 w-full items-center justify-center bg-ink px-5 text-xs tracking-[0.18em] text-ivory uppercase lg:w-auto"
+            onClick={(event) => {
+              event.preventDefault();
+              scrollToId("colecciones");
+            }}
+          >
+            <span className="relative z-10">Ver colecciones</span>
+            <span className="shimmer" aria-hidden="true" />
+          </a>
+          <a
+            href={whatsappUrl(mensajeGeneral())}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-12 w-full items-center justify-center border border-gold-line px-5 text-xs tracking-[0.16em] text-ink uppercase lg:w-auto"
+          >
+            Escríbenos por WhatsApp
+          </a>
         </div>
       </div>
     </section>

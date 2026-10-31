@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { useLite } from "../lib/useLite.ts";
 
 type Tag = "h1" | "h2";
@@ -9,14 +9,17 @@ type Props = {
   className?: string;
   id?: string;
   inmediato?: boolean;
+  /** Anima también en celular. Sigue apagado con prefers-reduced-motion. */
+  siempre?: boolean;
 };
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-export function Reveal({ lines, as: Tag, className, id, inmediato = false }: Props) {
+export function Reveal({ lines, as: Tag, className, id, inmediato = false, siempre = false }: Props) {
   const lite = useLite();
+  const reduce = useReducedMotion();
 
-  if (lite) {
+  if (reduce || (lite && !siempre)) {
     return (
       <Tag id={id} className={className}>
         {lines.map((line) => (

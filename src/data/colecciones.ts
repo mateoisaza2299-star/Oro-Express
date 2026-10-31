@@ -62,10 +62,10 @@ export const colecciones: Coleccion[] = [
 ];
 
 export const rejilla = [
-  "md:col-span-7 md:col-start-1 md:row-start-1 md:row-span-2",
-  "md:col-span-5 md:col-start-8 md:row-start-1",
-  "md:col-span-5 md:col-start-8 md:row-start-2",
-  "md:col-span-4 md:col-start-1 md:row-start-3",
-  "md:col-span-8 md:col-start-5 md:row-start-3",
-  "md:col-span-12 md:col-start-1 md:row-start-4",
+  "lg:col-span-7",
+  "lg:col-span-5",
+  "lg:col-span-5",
+  "lg:col-span-7",
+  "lg:col-span-6",
+  "lg:col-span-6",
 ];

@@ -1,7 +1,7 @@
 /**
  * Datos del negocio. Un campo en "PENDIENTE" no es un dato real:
  * no hay número, usuario, dirección ni horario confirmados.
- * El nombre visible del sitio sale de `nombre`.
+ * `nombre` es el wordmark. "Maison" es provisional hasta confirmar el nombre real.
  */
 export const site: {
   nombre: string;
@@ -10,7 +10,7 @@ export const site: {
   direccion: string;
   horario: string;
 } = {
-  nombre: "PENDIENTE",
+  nombre: "Maison",
   whatsapp: "PENDIENTE",
   instagram: "PENDIENTE",
   direccion: "PENDIENTE",

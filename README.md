@@ -2,7 +2,7 @@
 
 Landing de una sola página. Vite, React, TypeScript y Tailwind CSS.
 
-El nombre visible, WhatsApp, Instagram, dirección y horario están en `src/config.ts`. Hoy dicen `PENDIENTE`: no hay datos de negocio confirmados.
+El nombre visible es provisional (`Maison` en `src/config.ts`) hasta confirmarlo. WhatsApp, Instagram, dirección y horario siguen en `PENDIENTE`.
 
 ## Scripts
 
