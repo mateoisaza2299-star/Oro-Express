@@ -1,3 +1,4 @@
+import { copy } from "../content/es.ts";
 import { mensajeGeneral, whatsappUrl } from "../lib/whatsapp.ts";
 import { scrollToId } from "../lib/scroll.ts";
 import { Picture } from "./Picture.tsx";
@@ -14,7 +15,7 @@ export function Hero() {
       <div className="relative h-[54svh] overflow-hidden lg:absolute lg:inset-0 lg:h-full">
         <Picture
           nombre="hero"
-          alt="Collar de perlas y anillo con piedra clara sobre terciopelo verde, con cortinas claras al fondo."
+          alt={copy.hero.alt}
           sizes="100vw"
           priority
           className="hero-zoom absolute inset-0 h-full w-full object-cover object-[72%_48%] lg:object-[58%_center]"
@@ -23,19 +24,17 @@ export function Hero() {
         <div className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(90deg,#f3eee6_0%,rgba(243,238,230,0.94)_16%,rgba(243,238,230,0.72)_34%,rgba(243,238,230,0.28)_52%,transparent_68%)] lg:block" />
       </div>
       <div className="relative z-10 flex flex-col px-5 pt-3 pb-4 lg:h-full lg:w-[min(58%,36rem)] lg:justify-center lg:px-10 lg:py-0 xl:px-14">
-        <p className="font-serif text-xl text-gold italic lg:text-2xl">Para consulta</p>
+        <p className="font-serif text-xl text-gold italic lg:text-2xl">{copy.hero.kicker}</p>
         <Reveal
           as="h1"
           id="titulo-principal"
           inmediato
           siempre
-          lines={["Una luz ", "que no apura"]}
-          className="mt-3 max-w-[12ch] font-serif text-[clamp(2rem,7.4vw,2.65rem)] leading-[1.05] font-medium tracking-[-0.03em] text-ink lg:mt-4 lg:text-[clamp(3.25rem,4.4vw,4.75rem)]"
+          lines={[...copy.hero.lines]}
+          className="mt-3 font-serif text-[clamp(2rem,8vw,2.55rem)] leading-[1.02] font-medium tracking-[0.03em] text-ink lg:mt-4 lg:text-[clamp(2.75rem,3.6vw,3.6rem)]"
         />
-        <p className="mt-4 max-w-sm text-base leading-snug text-muted lg:mt-6 lg:leading-relaxed">
-          Anillos, collares, aretes y pulseras. El precio y el material exacto se confirman en conversación.
-        </p>
-        <div className="mt-4 flex flex-col gap-3 lg:mt-8 lg:flex-row lg:flex-nowrap">
+        <p className="mt-4 max-w-sm text-base leading-snug text-muted lg:mt-6 lg:leading-relaxed">{copy.hero.texto}</p>
+        <div className="mt-4 flex flex-col gap-3 lg:mt-8 lg:flex-row lg:flex-wrap">
           <a
             href="#colecciones"
             className="btn-shimmer inline-flex min-h-12 w-full items-center justify-center bg-ink px-5 text-xs tracking-[0.18em] text-ivory uppercase lg:w-auto"
@@ -44,7 +43,7 @@ export function Hero() {
               scrollToId("colecciones");
             }}
           >
-            <span className="relative z-10">Ver colecciones</span>
+            <span className="relative z-10">{copy.hero.colecciones}</span>
             <span className="shimmer" aria-hidden="true" />
           </a>
           <a
@@ -53,7 +52,7 @@ export function Hero() {
             rel="noopener noreferrer"
             className="inline-flex min-h-12 w-full items-center justify-center border border-gold-line px-5 text-xs tracking-[0.16em] text-ink uppercase lg:w-auto"
           >
-            Escríbenos por WhatsApp
+            {copy.hero.whatsapp}
           </a>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
+import { copy } from "../content/es.ts";
 import { colecciones, rejilla } from "../data/colecciones.ts";
 import type { Categoria } from "../data/productos.ts";
 import { Encabezado } from "./Encabezado.tsx";
@@ -23,10 +24,10 @@ export function Colecciones({ onElegir }: Props) {
     >
       <div className="mx-auto max-w-[1440px]">
         <Encabezado
-          numero="01"
-          titulo="Colecciones"
+          numero={copy.colecciones.numero}
+          lines={copy.colecciones.lines}
           tituloId="titulo-colecciones"
-          texto="Seis maneras de mirar la selección."
+          texto={copy.colecciones.texto}
         />
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:auto-rows-[320px]">
           {colecciones.map((coleccion, index) => (
@@ -56,7 +57,7 @@ export function Colecciones({ onElegir }: Props) {
                       aria-hidden="true"
                       className="col-rule inline-block h-px w-10 origin-left bg-champagne"
                     />
-                    Ver colección
+                    {copy.colecciones.ver}
                     <ArrowUpRight aria-hidden="true" size={16} strokeWidth={1.25} />
                   </span>
                 </span>

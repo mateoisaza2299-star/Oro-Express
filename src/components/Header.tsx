@@ -1,7 +1,8 @@
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { enlaces, site } from "../config.ts";
-import { scrollToId } from "../lib/scroll.ts";
+import { copy, navegacion } from "../content/es.ts";
+import { site } from "../config.ts";
+import { irA } from "../lib/navegar.ts";
 
 type Props = {
   menuAbierto: boolean;
@@ -21,7 +22,7 @@ export function Header({ menuAbierto, onMenu, inert = false }: Props) {
 
   function ir(id: string) {
     onMenu(false);
-    scrollToId(id);
+    irA(id);
   }
 
   return (
@@ -42,8 +43,8 @@ export function Header({ menuAbierto, onMenu, inert = false }: Props) {
         >
           {site.nombre}
         </a>
-        <nav className="hidden items-center gap-8 lg:flex" aria-label="Secciones">
-          {enlaces.map((enlace) => (
+        <nav className="hidden items-center gap-8 lg:flex" aria-label={copy.ui.secciones}>
+          {navegacion.map((enlace) => (
             <a
               key={enlace.id}
               href={`#${enlace.id}`}
@@ -62,7 +63,7 @@ export function Header({ menuAbierto, onMenu, inert = false }: Props) {
           className="inline-flex h-12 w-12 items-center justify-center text-ink lg:hidden"
           aria-expanded={menuAbierto}
           aria-controls="menu-movil"
-          aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
+          aria-label={menuAbierto ? copy.ui.cerrarMenu : copy.ui.abrirMenu}
           onClick={() => onMenu(!menuAbierto)}
         >
           {menuAbierto ? <X aria-hidden="true" size={22} strokeWidth={1.25} /> : <Menu aria-hidden="true" size={22} strokeWidth={1.25} />}

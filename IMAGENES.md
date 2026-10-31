@@ -35,4 +35,4 @@ La versión `-640` de cada una usa el mismo recorte, a 640 px de ancho.
 
 ## Catálogo
 
-`src/data/productos.ts` usa `prod-01` a `prod-08`. El precio de todas es «Consultar». No hay quilates ni certificaciones.
+`src/data/productos.ts` usa `prod-01` a `prod-08`. El precio no se publica: se conversa por WhatsApp. No hay quilates ni certificaciones.

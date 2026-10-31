@@ -1,5 +1,6 @@
 import type { Categoria } from "./productos.ts";
 import type { ImagenNombre } from "./medidas.ts";
+import { copy } from "../content/es.ts";
 
 export type Coleccion = {
   numero: string;
@@ -10,56 +11,20 @@ export type Coleccion = {
   posicion: string;
 };
 
-export const colecciones: Coleccion[] = [
-  {
-    numero: "01",
-    nombre: "Anillos",
-    texto: "Aros lisos y piedras en garra.",
-    imagen: "col-anillos",
-    alt: "Anillo de metal dorado con piedra clara redonda en cuatro garras, sobre mármol.",
-    posicion: "object-[center_42%]",
-  },
-  {
-    numero: "02",
-    nombre: "Collares",
-    texto: "Cadenas finas y dijes de poco volumen.",
-    imagen: "col-collares",
-    alt: "Collar de cadena fina con dije de corazón en metal dorado, sobre tela clara.",
-    posicion: "object-[center_40%]",
-  },
-  {
-    numero: "03",
-    nombre: "Aretes",
-    texto: "Del punto de luz al pendiente largo.",
-    imagen: "col-aretes",
-    alt: "Aretes largos de metal dorado con perlas y piedras claras, sobre seda beige.",
-    posicion: "object-center",
-  },
-  {
-    numero: "04",
-    nombre: "Pulseras",
-    texto: "Eslabón o línea de piedras.",
-    imagen: "col-pulseras",
-    alt: "Pulsera de piedras claras en línea, de metal dorado, llevada en la muñeca.",
-    posicion: "object-[center_35%]",
-  },
-  {
-    numero: "05",
-    nombre: "Compromiso",
-    texto: "Solitarios para conversar con calma.",
-    imagen: "col-compromiso",
-    alt: "Anillo con piedra clara en cuatro garras, dentro de un estuche de terciopelo verde.",
-    posicion: "object-[center_45%]",
-  },
-  {
-    numero: "06",
-    nombre: "Regalos",
-    texto: "Piezas presentadas para ofrecer.",
-    imagen: "col-regalos",
-    alt: "Dije de piedras claras en un estuche de terciopelo verde, con un lazo de raso.",
-    posicion: "object-[center_40%]",
-  },
+const base: { numero: string; nombre: Categoria; imagen: ImagenNombre; posicion: string }[] = [
+  { numero: "01", nombre: "Anillos", imagen: "col-anillos", posicion: "object-[center_42%]" },
+  { numero: "02", nombre: "Collares", imagen: "col-collares", posicion: "object-[center_40%]" },
+  { numero: "03", nombre: "Aretes", imagen: "col-aretes", posicion: "object-center" },
+  { numero: "04", nombre: "Pulseras", imagen: "col-pulseras", posicion: "object-[center_35%]" },
+  { numero: "05", nombre: "Compromiso", imagen: "col-compromiso", posicion: "object-[center_45%]" },
+  { numero: "06", nombre: "Regalos", imagen: "col-regalos", posicion: "object-[center_40%]" },
 ];
+
+export const colecciones: Coleccion[] = base.map((item) => ({
+  ...item,
+  texto: copy.colecciones.items[item.nombre].linea,
+  alt: copy.colecciones.items[item.nombre].alt,
+}));
 
 export const rejilla = [
   "lg:col-span-7",

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { copy } from "../content/es.ts";
 import { site } from "../config.ts";
+import { datoVisible } from "../lib/dato.ts";
 import { instagramHref, mensajeContacto, numeroWhatsapp, whatsappUrl } from "../lib/whatsapp.ts";
 import { Encabezado } from "./Encabezado.tsx";
 
@@ -15,7 +17,7 @@ export function Contacto() {
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!nombre.trim() || !mensaje.trim()) {
-      setError("Escribe tu nombre y un mensaje.");
+      setError(copy.contacto.error);
       return;
     }
     setError("");
@@ -27,28 +29,23 @@ export function Contacto() {
       <div className="mx-auto grid max-w-[1440px] gap-16 md:grid-cols-12">
         <div className="md:col-span-5">
           <Encabezado
-            numero="05"
-            titulo="Contacto"
+            numero={copy.contacto.numero}
+            lines={copy.contacto.lines}
             tituloId="titulo-contacto"
-            texto="Escribe aquí. El mensaje se abre en WhatsApp y no pasa por ningún servidor de esta página."
+            texto={copy.contacto.texto}
           />
-          {!numero ? (
-            <p className="mb-6 max-w-sm text-sm leading-relaxed text-muted">
-              El número de WhatsApp está pendiente. El enlace abre WhatsApp con el mensaje listo para que elijas el
-              destinatario.
-            </p>
-          ) : null}
+          {!numero ? <p className="mb-6 max-w-sm text-sm leading-relaxed text-muted">{copy.contacto.sinNumero}</p> : null}
           <dl>
-            <Dato etiqueta="WhatsApp" valor={site.whatsapp} href={numero ? `https://wa.me/${numero}` : null} />
-            <Dato etiqueta="Instagram" valor={site.instagram} href={instagram} />
-            <Dato etiqueta="Dirección" valor={site.direccion} />
-            <Dato etiqueta="Horario" valor={site.horario} />
+            <Dato etiqueta={copy.contacto.whatsapp} valor={site.whatsapp} href={numero ? `https://wa.me/${numero}` : null} />
+            <Dato etiqueta={copy.contacto.instagram} valor={site.instagram} href={instagram} />
+            <Dato etiqueta={copy.contacto.direccion} valor={site.direccion} />
+            <Dato etiqueta={copy.contacto.horario} valor={site.horario} />
           </dl>
         </div>
         <form className="md:col-span-6 md:col-start-7" onSubmit={onSubmit} noValidate>
           <Campo
             id="nombre"
-            etiqueta="Nombre"
+            etiqueta={copy.contacto.nombre}
             value={nombre}
             autoComplete="name"
             invalid={Boolean(error) && !nombre.trim()}
@@ -56,14 +53,14 @@ export function Contacto() {
           />
           <Campo
             id="pieza"
-            etiqueta="Pieza de interés"
+            etiqueta={copy.contacto.pieza}
             value={pieza}
             autoComplete="off"
             onChange={setPieza}
           />
           <div className="mt-6">
             <label htmlFor="mensaje" className="text-xs tracking-[0.16em] text-gold uppercase">
-              Mensaje
+              {copy.contacto.mensaje}
             </label>
             <textarea
               id="mensaje"
@@ -83,9 +80,9 @@ export function Contacto() {
           ) : null}
           <button
             type="submit"
-            className="mt-8 inline-flex min-h-11 items-center bg-ink px-5 text-xs tracking-[0.16em] text-ivory uppercase"
+            className="mt-8 inline-flex min-h-12 items-center bg-ink px-5 text-xs tracking-[0.16em] text-ivory uppercase"
           >
-            Abrir WhatsApp
+            {copy.contacto.enviar}
           </button>
         </form>
       </div>
@@ -129,16 +126,18 @@ function Campo({
 }
 
 function Dato({ etiqueta, valor, href }: { etiqueta: string; valor: string; href?: string | null }) {
+  const visible = datoVisible(valor);
+  if (!visible) return null;
   return (
     <div className="border-t border-gold-line/60 py-4">
       <dt className="text-xs tracking-[0.16em] text-gold uppercase">{etiqueta}</dt>
       <dd className="mt-1 font-serif text-2xl text-ink">
         {href ? (
           <a href={href} target="_blank" rel="noopener noreferrer" className="underline-offset-4 hover:underline">
-            {valor}
+            {visible}
           </a>
         ) : (
-          valor
+          visible
         )}
       </dd>
     </div>

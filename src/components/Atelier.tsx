@@ -1,3 +1,4 @@
+import { copy } from "../content/es.ts";
 import { Encabezado } from "./Encabezado.tsx";
 import { Parallax } from "./Parallax.tsx";
 import { Picture } from "./Picture.tsx";
@@ -11,7 +12,7 @@ export function Atelier() {
             <Parallax>
               <Picture
                 nombre="atelier"
-                alt="Collar fino de metal dorado con piedra clara en bisel, apoyado en una piedra clara sobre terciopelo verde."
+                alt={copy.atelier.alt}
                 sizes="(min-width: 768px) 55vw, 100vw"
                 className="absolute inset-0 h-full w-full object-cover"
               />
@@ -20,14 +21,12 @@ export function Atelier() {
         </figure>
         <div className="md:col-span-5">
           <Encabezado
-            numero="03"
-            titulo="Atelier"
+            numero={copy.atelier.numero}
+            lines={copy.atelier.lines}
             tituloId="titulo-atelier"
-            texto="Miramos cada pieza de cerca: el perfil del metal, cómo se sostiene la piedra, cómo cae la cadena."
+            texto={copy.atelier.texto}
           />
-          <p className="max-w-md text-base leading-relaxed text-muted">
-            La medida, el material exacto y el precio se confirman en conversación. No hay cifras de taller en esta página.
-          </p>
+          <p className="max-w-md text-base leading-relaxed text-muted">{copy.atelier.cuerpo}</p>
         </div>
       </div>
     </section>

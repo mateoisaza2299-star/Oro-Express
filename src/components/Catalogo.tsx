@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { copy } from "../content/es.ts";
 import { categorias, productos, type Filtro, type Producto } from "../data/productos.ts";
 import { fuentes } from "../lib/imagen.ts";
 import { useLite } from "../lib/useLite.ts";
@@ -21,12 +22,12 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
     <section id="catalogo" className="scroll-mt-24 bg-ivory px-5 py-20 md:px-10 md:py-28" aria-labelledby="titulo-piezas">
       <div className="mx-auto max-w-[1440px]">
         <Encabezado
-          numero="02"
-          titulo="Piezas"
+          numero={copy.catalogo.numero}
+          lines={copy.catalogo.lines}
           tituloId="titulo-piezas"
-          texto="Ocho piezas para consultar. El precio no está publicado."
+          texto={copy.catalogo.texto}
         />
-        <div className="mb-10 flex flex-wrap gap-2" role="group" aria-label="Filtrar por categoría">
+        <div className="mb-10 flex flex-wrap gap-2" role="group" aria-label={copy.ui.filtrar}>
           {filtros.map((item) => {
             const activo = item === filtro;
             const id = item === "Todos" ? "todos" : item.toLowerCase();
@@ -41,17 +42,17 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                 }`}
                 onClick={() => onFiltro(item)}
               >
-                {item}
+                {item === "Todos" ? copy.catalogo.todos : item}
               </button>
             );
           })}
         </div>
         <p className="sr-only" aria-live="polite">
-          {visibles.length} {visibles.length === 1 ? "pieza" : "piezas"}
+          {visibles.length} {visibles.length === 1 ? copy.catalogo.una : copy.catalogo.varias}
         </p>
         {visibles.length === 0 ? (
           <p role="status" className="text-base text-muted">
-            No hay piezas en esta categoría por ahora.
+            {copy.catalogo.vacio}
           </p>
         ) : (
           <ul className="grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
@@ -101,9 +102,9 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                             {producto.nombre}
                           </span>
                         </span>
-                        <span className="shrink-0 text-xs tracking-[0.16em] text-ink uppercase">Consultar</span>
+                        <span className="shrink-0 text-xs tracking-[0.16em] text-ink uppercase">{producto.precio}</span>
                       </span>
-                      <span className="mt-3 block text-xs tracking-[0.16em] text-muted uppercase">Vista rápida</span>
+                      <span className="mt-3 block text-xs tracking-[0.16em] text-muted uppercase">{copy.catalogo.ver}</span>
                     </button>
                   </GlowCard>
                 </li>

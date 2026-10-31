@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { copy } from "../content/es.ts";
 import type { Producto } from "../data/productos.ts";
 import { fuentes } from "../lib/imagen.ts";
 import { setScrollLocked } from "../lib/scroll.ts";
@@ -34,7 +35,7 @@ export default function VistaRapida({ producto, onClose }: Props) {
       exit={lite ? undefined : { opacity: 0 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
     >
-      <button type="button" className="absolute inset-0 bg-ink/50" aria-label="Cerrar vista rápida" onClick={onClose} />
+      <button type="button" className="absolute inset-0 bg-ink/50" aria-label={copy.ui.cerrarVista} onClick={onClose} />
       <div
         ref={ref}
         role="dialog"
@@ -59,28 +60,28 @@ export default function VistaRapida({ producto, onClose }: Props) {
           <button
             type="button"
             className="absolute top-3 right-3 inline-flex h-11 w-11 items-center justify-center text-ink"
-            aria-label="Cerrar"
+            aria-label={copy.ui.cerrar}
             onClick={onClose}
           >
             <X aria-hidden="true" size={22} strokeWidth={1.25} />
           </button>
           <p className="text-xs tracking-[0.18em] text-gold uppercase">
             {producto.categoria}
-            <span className="sr-only">. Galería, imagen 1 de 1.</span>
+            <span className="sr-only">. {copy.ui.galeria}.</span>
           </p>
           <p aria-hidden="true" className="mt-2 text-xs tracking-[0.18em] text-muted uppercase">
-            Galería 1 / 1
+            {copy.ui.galeria}
           </p>
           <h2 id="vista-titulo" className="mt-3 pr-12 font-serif text-4xl leading-[1.05] font-medium text-ink">
             {producto.nombre}
           </h2>
           <dl className="mt-6 border-t border-gold-line/60">
             <div className="grid grid-cols-[7rem_1fr] gap-3 border-b border-gold-line/40 py-3 text-sm">
-              <dt className="text-gold">Material</dt>
+              <dt className="text-gold">{copy.vista.material}</dt>
               <dd>{producto.material}</dd>
             </div>
             <div className="grid grid-cols-[7rem_1fr] gap-3 border-b border-gold-line/40 py-3 text-sm">
-              <dt className="text-gold">Precio</dt>
+              <dt className="text-gold">{copy.vista.precio}</dt>
               <dd>{producto.precio}</dd>
             </div>
           </dl>
@@ -92,9 +93,9 @@ export default function VistaRapida({ producto, onClose }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             data-testid="whatsapp-consulta"
-            className="btn-shimmer mt-8 inline-flex min-h-11 items-center bg-ink px-5 text-xs tracking-[0.16em] text-ivory uppercase"
+            className="btn-shimmer mt-8 inline-flex min-h-12 items-center bg-ink px-5 text-xs tracking-[0.16em] text-ivory uppercase"
           >
-            <span className="relative z-10">Consultar por WhatsApp</span>
+            <span className="relative z-10">{copy.vista.asesoria}</span>
             <span className="shimmer" aria-hidden="true" />
           </a>
         </div>
