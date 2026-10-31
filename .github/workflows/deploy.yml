@@ -1,7 +1,8 @@
-name: Publicar en GitHub Pages
+name: Deploy GitHub Pages
 
-# Manual a propósito: no se publica hasta que se dispare este workflow.
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -22,7 +23,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: lts/*
           cache: npm
       - name: Instalar
         run: npm ci

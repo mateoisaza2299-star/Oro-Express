@@ -13,11 +13,11 @@ npm run build
 npm run preview
 ```
 
-La base pública está en `vite.config.ts` (`REPO`). Para este repositorio es `/Oro-Express/`.
+La base pública está en `vite.config.ts`: `/Oro-Express/`.
 
 ## Páginas
 
-El workflow `.github/workflows/pages.yml` publica `dist` en GitHub Pages solo cuando se dispara a mano. No hay rutas de cliente, así que no se copia `index.html` a `404.html`.
+El workflow `.github/workflows/deploy.yml` publica `dist` en GitHub Pages al hacer push a `main`, o al dispararlo a mano. No hay rutas de cliente, así que no se copia `index.html` a `404.html`.
 
 ## Imágenes
 
