@@ -1,0 +1,192 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-serif: "Cormorant Garamond", "Iowan Old Style", Palatino, "Palatino Linotype", serif;
+  --color-ivory: #f3eee6;
+  --color-paper: #e7e0d4;
+  --color-ink: #1c1916;
+  --color-muted: #4a453f;
+  --color-gold: #6e5430;
+  --color-gold-line: #a68555;
+  --color-champagne: #e7d3a8;
+  --color-emerald: #14312b;
+}
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/cormorant-garamond-500.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/cormorant-garamond-500-italic.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: Outfit;
+  font-style: normal;
+  font-weight: 300 400;
+  font-display: swap;
+  src: url("./fonts/outfit-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@layer base {
+  html {
+    overflow-x: clip;
+    background: var(--color-ivory);
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-ivory);
+    color: var(--color-ink);
+    font-weight: 300;
+  }
+
+  html.is-locked,
+  html.is-locked body {
+    overflow: hidden;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+  }
+
+  footer :focus-visible {
+    outline-color: var(--color-ivory);
+  }
+
+  ::selection {
+    background: var(--color-champagne);
+    color: var(--color-ink);
+  }
+}
+
+.skip {
+  position: absolute;
+  top: -200%;
+  left: 1rem;
+  z-index: 80;
+  background: var(--color-ink);
+  color: var(--color-ivory);
+  padding: 0.75rem 1rem;
+}
+
+.skip:focus {
+  top: 1rem;
+}
+
+.btn-shimmer {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+}
+
+.shimmer {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 32%, rgba(243, 238, 230, 0.38) 50%, transparent 68%);
+  transform: translateX(-120%);
+}
+
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .shimmer::after {
+    animation: shimmer 3.8s ease-in-out infinite;
+  }
+
+  .hero-zoom {
+    animation: hero-zoom 26s ease-out forwards;
+  }
+
+  .page-rule {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 70;
+    height: 2px;
+    width: 100%;
+    pointer-events: none;
+    transform-origin: left center;
+    background: var(--color-gold-line);
+    animation: page-rule 1.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .glow-card {
+    position: relative;
+  }
+
+  .glow-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    background: radial-gradient(
+      200px circle at var(--gx, 50%) var(--gy, 50%),
+      rgba(166, 133, 85, 0.26),
+      transparent 68%
+    );
+  }
+
+  .glow-card:hover::after {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  55% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes hero-zoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.06);
+  }
+}
+
+@keyframes page-rule {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  72% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
