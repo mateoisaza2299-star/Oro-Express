@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { esImagenNombre } from "../lib/imagen.ts";
 import { supabase } from "../lib/supabase.ts";
-import { borrarFoto, esFotoAdmitida, subirFoto } from "./foto.ts";
-import { Area, Boton, FotoField } from "./ui.tsx";
+import { esSesionVencida, textoError } from "./errores.ts";
+import { borrarFoto, subirFoto, validarArchivo } from "./foto.ts";
+import { Barra, Boton, ErrorCarga, Esqueleto, Progreso, VistaFoto } from "./ui.tsx";
 
 const LIMITE_FRASE = 200;
 
@@ -15,14 +16,18 @@ type Categoria = {
   activa: boolean;
 };
 
-type Props = { avisar: (texto: string, error?: boolean) => void };
+type Aviso = (texto: string, error?: boolean, detalle?: string) => void;
+type Props = { avisar: Aviso; onSucio: (sucio: boolean) => void; onSesion: () => void };
 
-export function Categorias({ avisar }: Props) {
+export function Categorias({ avisar, onSucio, onSesion }: Props) {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [base, setBase] = useState<Categoria[]>([]);
   const [archivos, setArchivos] = useState<Record<string, File | null>>({});
   const [listo, setListo] = useState(false);
-  const [guardando, setGuardando] = useState<string | null>(null);
+  const [fallo, setFallo] = useState("");
+  const [intento, setIntento] = useState(0);
+  const [guardando, setGuardando] = useState(false);
+  const [progreso, setProgreso] = useState<number | null>(null);
 
   useEffect(() => {
     let vivo = true;
@@ -33,7 +38,8 @@ export function Categorias({ avisar }: Props) {
       .then(({ data, error }) => {
         if (!vivo) return;
         if (error || !data) {
-          avisar("No se pudieron cargar las categorías.", true);
+          if (esSesionVencida(error)) onSesion();
+          else setFallo(textoError(error ?? "Sin datos"));
           setListo(true);
           return;
         }
@@ -47,104 +53,192 @@ export function Categorias({ avisar }: Props) {
         }));
         setCategorias(filas);
         setBase(filas);
+        setArchivos({});
         setListo(true);
       });
     return () => {
       vivo = false;
     };
-  }, [avisar]);
+  }, [intento, onSesion]);
+
+  const sucio = categorias.some((cat) => {
+    const origen = base.find((item) => item.id === cat.id);
+    if (!origen) return false;
+    return origen.linea !== cat.linea || origen.activa !== cat.activa || Boolean(archivos[cat.id]);
+  });
+
+  useEffect(() => {
+    onSucio(sucio);
+  }, [sucio, onSucio]);
+
+  useEffect(() => () => onSucio(false), [onSucio]);
 
   function actualizar(id: string, cambio: Partial<Categoria>) {
     setCategorias((lista) => lista.map((cat) => (cat.id === id ? { ...cat, ...cambio } : cat)));
   }
 
-  async function guardar(cat: Categoria) {
-    if (guardando) return;
-    const anterior = base.find((item) => item.id === cat.id) ?? cat;
-    const linea = cat.linea.trim();
-    if (linea.length > LIMITE_FRASE) {
+  function descartar() {
+    setCategorias(base);
+    setArchivos({});
+  }
+
+  function elegir(id: string, archivo: File | null) {
+    if (!archivo) {
+      setArchivos((mapa) => ({ ...mapa, [id]: null }));
+      return;
+    }
+    const motivo = validarArchivo(archivo);
+    if (motivo) {
+      avisar(motivo, true);
+      return;
+    }
+    setArchivos((mapa) => ({ ...mapa, [id]: archivo }));
+  }
+
+  async function guardar() {
+    if (guardando || !sucio) return;
+    const pendientes = categorias.filter((cat) => {
+      const origen = base.find((item) => item.id === cat.id);
+      if (!origen) return false;
+      return origen.linea !== cat.linea || origen.activa !== cat.activa || Boolean(archivos[cat.id]);
+    });
+    if (pendientes.some((cat) => cat.linea.trim().length > LIMITE_FRASE)) {
       avisar("La frase puede tener hasta 200 caracteres.", true);
       return;
     }
-    const archivo = archivos[cat.id] ?? null;
-    if (archivo && !esFotoAdmitida(archivo)) {
-      avisar("La foto tiene que ser JPG, PNG o WebP.", true);
-      return;
-    }
-    setGuardando(cat.id);
-    let subida: string | null = null;
+    setGuardando(true);
+    const guardadas: Categoria[] = [];
     try {
-      if (archivo) subida = await subirFoto(archivo);
-      const { data, error } = await supabase
-        .from("categorias")
-        .update({ linea, activa: cat.activa, ...(subida ? { imagen_url: subida } : {}) })
-        .eq("id", cat.id)
-        .select("id");
-      if (error || !data?.length) {
-        await borrarFoto(subida);
-        setCategorias((lista) => lista.map((item) => (item.id === cat.id ? anterior : item)));
+      for (const cat of pendientes) {
+        const origen = base.find((item) => item.id === cat.id);
+        if (!origen) continue;
+        const linea = cat.linea.trim();
+        const archivo = archivos[cat.id] ?? null;
+        let subida: string | null = null;
+        if (archivo) {
+          setProgreso(0);
+          subida = await subirFoto(archivo, setProgreso);
+        }
+        const { data, error } = await supabase
+          .from("categorias")
+          .update({ linea, activa: cat.activa, ...(subida ? { imagen_url: subida } : {}) })
+          .eq("id", cat.id)
+          .select("id");
+        if (error || !data?.length) {
+          await borrarFoto(subida);
+          if (esSesionVencida(error)) onSesion();
+          else avisar("No se pudo guardar.", true, textoError(error));
+          return;
+        }
+        if (subida) await borrarFoto(origen.imagen_url);
+        guardadas.push({ ...cat, linea, imagen_url: subida ?? origen.imagen_url });
         setArchivos((mapa) => ({ ...mapa, [cat.id]: null }));
-        avisar("No se pudo guardar.", true);
-        return;
       }
-      if (subida) await borrarFoto(anterior.imagen_url);
-      const guardada = { ...cat, linea, imagen_url: subida ?? anterior.imagen_url };
-      setCategorias((lista) => lista.map((item) => (item.id === cat.id ? guardada : item)));
-      setBase((lista) => lista.map((item) => (item.id === cat.id ? guardada : item)));
-      setArchivos((mapa) => ({ ...mapa, [cat.id]: null }));
-      avisar("Categoría guardada.");
-    } catch {
-      await borrarFoto(subida);
-      setCategorias((lista) => lista.map((item) => (item.id === cat.id ? anterior : item)));
-      setArchivos((mapa) => ({ ...mapa, [cat.id]: null }));
-      avisar("No se pudo guardar.", true);
+      avisar("Categorías guardadas.");
+    } catch (error) {
+      if (esSesionVencida(error)) onSesion();
+      else avisar("No se pudo guardar.", true, textoError(error));
     } finally {
-      setGuardando(null);
+      if (guardadas.length > 0) {
+        const mapa = new Map(guardadas.map((cat) => [cat.id, cat]));
+        setBase((actual) => actual.map((cat) => mapa.get(cat.id) ?? cat));
+        setCategorias((lista) => lista.map((cat) => mapa.get(cat.id) ?? cat));
+      }
+      setGuardando(false);
+      setProgreso(null);
     }
   }
 
-  if (!listo) return <p className="mt-6 text-sm text-muted">Cargando categorías…</p>;
+  if (!listo) return <Esqueleto filas={6} />;
+  if (fallo) {
+    return (
+      <ErrorCarga
+        texto="No se pudieron cargar las categorías."
+        detalle={fallo}
+        onReintentar={() => {
+          setListo(false);
+          setFallo("");
+          setIntento((valor) => valor + 1);
+        }}
+      />
+    );
+  }
 
   return (
-    <ul className="mt-6 min-w-0">
-      {categorias.map((cat) => {
-        const previa = archivos[cat.id]
-          ? null
-          : cat.imagen_url ||
-            (esImagenNombre(cat.imagen_local) ? `${import.meta.env.BASE_URL}img/${cat.imagen_local}.webp` : null);
-        return (
-          <li key={cat.id} className="border-t border-gold-line py-6">
-            <h2 className="font-serif text-3xl text-ink">{cat.nombre}</h2>
-            <Area
-              id={`linea-${cat.id}`}
-              etiqueta="Frase"
-              value={cat.linea}
-              maxLength={LIMITE_FRASE}
-              onChange={(linea) => actualizar(cat.id, { linea })}
-            />
-            <FotoField
-              id={`foto-${cat.id}`}
-              archivo={archivos[cat.id] ?? null}
-              url={previa}
-              onArchivo={(archivo) => setArchivos((mapa) => ({ ...mapa, [cat.id]: archivo }))}
-            />
-            <label className="mt-4 flex min-h-11 items-center gap-3 text-sm text-ink">
-              <input
-                type="checkbox"
-                checked={cat.activa}
-                onChange={(event) => actualizar(cat.id, { activa: event.target.checked })}
-                className="h-5 w-5 accent-ink"
+    <div className="mt-6 min-w-0 pb-28">
+      <ul>
+        {categorias.map((cat) => {
+          const local = esImagenNombre(cat.imagen_local)
+            ? `${import.meta.env.BASE_URL}img/${cat.imagen_local}.webp`
+            : null;
+          return (
+            <li key={cat.id} className="flex min-w-0 gap-3 border-t border-gold-line py-4">
+              <VistaFoto
+                archivo={archivos[cat.id] ?? null}
+                url={cat.imagen_url || local}
+                className="aspect-[4/5] w-16 shrink-0 object-cover"
               />
-              Visible en la página
-            </label>
-            <div className="mt-4">
-              <Boton disabled={guardando === cat.id} onClick={() => void guardar(cat)}>
-                {guardando === cat.id ? "Guardando…" : "Guardar"}
-              </Boton>
-            </div>
-          </li>
-        );
-      })}
-    </ul>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-3">
+                  <h2 className="truncate font-serif text-2xl text-ink">{cat.nombre}</h2>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={cat.activa}
+                    aria-label={cat.activa ? `Desactivar ${cat.nombre}` : `Activar ${cat.nombre}`}
+                    onClick={() => actualizar(cat.id, { activa: !cat.activa })}
+                    className="inline-flex min-h-11 min-w-11 items-center justify-end"
+                  >
+                    <span className={`relative h-7 w-12 rounded-full ${cat.activa ? "bg-ink" : "border border-gold-line bg-paper"}`}>
+                      <span
+                        className={`absolute top-0.5 h-6 w-6 rounded-full ${cat.activa ? "left-5 bg-ivory" : "left-0.5 bg-ink"}`}
+                      />
+                    </span>
+                  </button>
+                </div>
+                <label htmlFor={`linea-${cat.id}`} className="mt-2 block text-xs tracking-[0.16em] text-gold uppercase">
+                  Frase
+                </label>
+                <textarea
+                  id={`linea-${cat.id}`}
+                  rows={2}
+                  value={cat.linea}
+                  maxLength={LIMITE_FRASE}
+                  onChange={(event) => actualizar(cat.id, { linea: event.target.value })}
+                  className="mt-2 w-full min-w-0 resize-y border-b border-gold-line bg-transparent py-2 text-base text-ink outline-none"
+                />
+                <p className="mt-1 text-right text-xs text-muted">
+                  {cat.linea.length}/{LIMITE_FRASE}
+                </p>
+                <label className="mt-1 inline-flex min-h-11 items-center text-xs tracking-[0.14em] text-gold uppercase">
+                  Cambiar foto
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="sr-only"
+                    onChange={(event) => {
+                      const archivo = event.target.files?.[0] ?? null;
+                      event.currentTarget.value = "";
+                      elegir(cat.id, archivo);
+                    }}
+                  />
+                </label>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+      <Barra>
+        {progreso != null ? <Progreso valor={progreso} /> : null}
+        <div className="grid grid-cols-2 gap-2">
+          <Boton disabled={!sucio || guardando} className="sm:w-full" onClick={() => void guardar()}>
+            {guardando ? "Guardando…" : "Guardar"}
+          </Boton>
+          <Boton secundario disabled={!sucio || guardando} className="sm:w-full" onClick={descartar}>
+            Cancelar
+          </Boton>
+        </div>
+      </Barra>
+    </div>
   );
 }
