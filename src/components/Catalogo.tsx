@@ -1,7 +1,8 @@
 import { motion } from "motion/react";
 import { copy } from "../content/es.ts";
-import { categorias, productos, type Filtro, type Producto } from "../data/productos.ts";
-import { fuentes } from "../lib/imagen.ts";
+import { type Filtro, type Producto } from "../data/productos.ts";
+import { useContenido } from "../lib/contenido.ts";
+import { fotoDe } from "../lib/imagen.ts";
 import { useLite } from "../lib/useLite.ts";
 import { Encabezado } from "./Encabezado.tsx";
 import { GlowCard } from "./GlowCard.tsx";
@@ -12,10 +13,10 @@ type Props = {
   onAbrir: (producto: Producto) => void;
 };
 
-const filtros: Filtro[] = ["Todos", ...categorias];
-
 export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
   const lite = useLite();
+  const { categorias, productos } = useContenido();
+  const filtros: Filtro[] = ["Todos", ...categorias];
   const visibles = filtro === "Todos" ? productos : productos.filter((producto) => producto.categoria === filtro);
 
   return (
@@ -57,7 +58,7 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
         ) : (
           <ul className="grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
             {visibles.map((producto) => {
-              const foto = fuentes(producto.imagen);
+              const foto = fotoDe(producto.imagen, producto.imagenUrl);
               return (
                 <li key={producto.id}>
                   <GlowCard>
@@ -68,7 +69,7 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                       onClick={() => onAbrir(producto)}
                     >
                       <span className="relative block aspect-[4/5] overflow-hidden bg-paper">
-                        {lite ? (
+                        {foto && lite ? (
                           <img
                             {...foto}
                             alt={producto.alt}
@@ -77,7 +78,8 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                             decoding="async"
                             className="absolute inset-0 h-full w-full object-cover"
                           />
-                        ) : (
+                        ) : null}
+                        {foto && !lite ? (
                           <motion.img
                             {...foto}
                             alt={producto.alt}
@@ -91,7 +93,7 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                             viewport={{ once: true, margin: "0px 0px -40px 0px" }}
                             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                           />
-                        )}
+                        ) : null}
                       </span>
                       <span className="mt-4 flex items-baseline justify-between gap-4 border-t border-gold-line/70 pt-3">
                         <span>

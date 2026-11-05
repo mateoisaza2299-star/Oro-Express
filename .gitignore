@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Secretos locales. .env.example se versiona vacío.
+.env
+.env.local
+.env.development
+.env.production
+
 # Originales JPG (más de 5 MB). Las versiones publicadas están en public/img.
 assets-src/
 

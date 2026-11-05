@@ -1,7 +1,8 @@
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { copy, navegacion } from "../content/es.ts";
-import { site } from "../config.ts";
+import { useContenido } from "../lib/contenido.ts";
+import { datoVisible } from "../lib/dato.ts";
 import { irA } from "../lib/navegar.ts";
 
 type Props = {
@@ -12,6 +13,8 @@ type Props = {
 
 export function Header({ menuAbierto, onMenu, inert = false }: Props) {
   const [pegado, setPegado] = useState(false);
+  const { site } = useContenido();
+  const nombre = datoVisible(site.nombre);
 
   useEffect(() => {
     const onScroll = () => setPegado(window.scrollY > 8);
@@ -41,7 +44,7 @@ export function Header({ menuAbierto, onMenu, inert = false }: Props) {
             ir("inicio");
           }}
         >
-          {site.nombre}
+          {nombre}
         </a>
         <nav className="hidden items-center gap-8 lg:flex" aria-label={copy.ui.secciones}>
           {navegacion.map((enlace) => (

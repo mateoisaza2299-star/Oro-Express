@@ -1,5 +1,6 @@
 import { AnimatePresence } from "motion/react";
 import { lazy, Suspense, useEffect, useState } from "react";
+import { useCargarContenido } from "./lib/contenido.ts";
 import { Atelier } from "./components/Atelier.tsx";
 import { Beneficios } from "./components/Beneficios.tsx";
 import { Catalogo } from "./components/Catalogo.tsx";
@@ -18,14 +19,17 @@ import type { Filtro, Producto } from "./data/productos.ts";
 import { irA, seguirHash } from "./lib/navegar.ts";
 
 const VistaRapida = lazy(() => import("./components/VistaRapida.tsx"));
+const Panel = lazy(() => import("./admin/Panel.tsx"));
 
 export default function App() {
+  useCargarContenido();
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [filtro, setFiltro] = useState<Filtro>("Todos");
   const [pieza, setPieza] = useState<Producto | null>(null);
   const [hash, setHash] = useState(() => window.location.hash.replace("#", ""));
   const bloqueado = menuAbierto || pieza !== null;
-  const pagina = esPagina(hash) ? hash : null;
+  const admin = hash === "/admin";
+  const pagina = !admin && esPagina(hash) ? hash : null;
 
   useEffect(() => {
     const sync = () => setHash(window.location.hash.replace("#", ""));
@@ -34,8 +38,29 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (admin) {
+      window.scrollTo(0, 0);
+      return;
+    }
     seguirHash(hash);
-  }, [hash]);
+  }, [hash, admin]);
+
+  useEffect(() => {
+    if (!admin) return;
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex";
+    document.head.appendChild(meta);
+    return () => meta.remove();
+  }, [admin]);
+
+  if (admin) {
+    return (
+      <Suspense fallback={<p className="px-5 pt-24 text-sm text-muted">Cargando…</p>}>
+        <Panel />
+      </Suspense>
+    );
+  }
 
   return (
     <SmoothScroll>

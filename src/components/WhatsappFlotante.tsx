@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { copy } from "../content/es.ts";
+import { useContenido } from "../lib/contenido.ts";
 import { whatsappUrl } from "../lib/whatsapp.ts";
 
 export function WhatsappFlotante() {
   const [visible, setVisible] = useState(false);
+  useContenido();
 
   useEffect(() => {
     const actualizar = () => {

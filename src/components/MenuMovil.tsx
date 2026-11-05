@@ -1,7 +1,8 @@
 import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { copy, navegacion } from "../content/es.ts";
-import { site } from "../config.ts";
+import { useContenido } from "../lib/contenido.ts";
+import { datoVisible } from "../lib/dato.ts";
 import { irA } from "../lib/navegar.ts";
 import { setScrollLocked } from "../lib/scroll.ts";
 import { useFocusTrap } from "../lib/useFocusTrap.ts";
@@ -12,6 +13,8 @@ type Props = {
 
 export function MenuMovil({ onClose }: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  const { site } = useContenido();
+  const nombre = datoVisible(site.nombre);
   useFocusTrap(true, ref, onClose);
 
   useEffect(() => {
@@ -34,7 +37,7 @@ export function MenuMovil({ onClose }: Props) {
       className="fixed inset-0 z-50 flex flex-col bg-ivory px-5 pt-5 pb-10"
     >
       <div className="flex items-center justify-between">
-        <p className="font-serif text-[1.55rem] tracking-[0.16em] text-ink">{site.nombre}</p>
+        <p className="font-serif text-[1.55rem] tracking-[0.16em] text-ink">{nombre}</p>
         <button
           type="button"
           className="inline-flex h-12 w-12 items-center justify-center"

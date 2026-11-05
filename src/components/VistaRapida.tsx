@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { copy } from "../content/es.ts";
 import type { Producto } from "../data/productos.ts";
-import { fuentes } from "../lib/imagen.ts";
+import { fotoDe } from "../lib/imagen.ts";
 import { setScrollLocked } from "../lib/scroll.ts";
 import { useFocusTrap } from "../lib/useFocusTrap.ts";
 import { useLite } from "../lib/useLite.ts";
@@ -17,7 +17,7 @@ type Props = {
 export default function VistaRapida({ producto, onClose }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const lite = useLite();
-  const foto = fuentes(producto.imagen);
+  const foto = fotoDe(producto.imagen, producto.imagenUrl);
   const consulta = whatsappUrl(mensajeConsulta(producto.nombre, producto.categoria));
 
   useFocusTrap(true, ref, onClose);
@@ -47,14 +47,16 @@ export default function VistaRapida({ producto, onClose }: Props) {
         className="relative flex max-h-[100svh] w-full max-w-5xl flex-col overflow-y-auto bg-ivory sm:max-h-[90svh] md:grid md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:overflow-hidden"
       >
         <div className="relative aspect-[4/5] overflow-hidden bg-paper md:aspect-auto md:min-h-[32rem]">
-          <motion.img
-            {...foto}
-            alt={producto.alt}
-            sizes="(min-width: 768px) 40vw, 100vw"
-            decoding="async"
-            layoutId={lite ? undefined : `foto-${producto.id}`}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
+          {foto ? (
+            <motion.img
+              {...foto}
+              alt={producto.alt}
+              sizes="(min-width: 768px) 40vw, 100vw"
+              decoding="async"
+              layoutId={lite ? undefined : `foto-${producto.id}`}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : null}
         </div>
         <div className="relative px-5 py-6 md:overflow-y-auto md:px-8 md:py-8">
           <button

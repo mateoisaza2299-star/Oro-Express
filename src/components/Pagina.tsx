@@ -1,5 +1,5 @@
 import { copy, type IdPagina } from "../content/es.ts";
-import { datos } from "../config.ts";
+import { useContenido } from "../lib/contenido.ts";
 import { datoVisible } from "../lib/dato.ts";
 import { irA } from "../lib/navegar.ts";
 
@@ -44,6 +44,7 @@ function Parrafos({ textos }: { textos: readonly string[] }) {
 
 function Privacidad() {
   const pagina = copy.paginas.privacidad;
+  const { datos } = useContenido();
   const responsable = datoVisible(datos.responsable);
   const nit = datoVisible(datos.nit);
   const correo = datoVisible(datos.correoDatos);

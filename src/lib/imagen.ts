@@ -1,5 +1,15 @@
 import { medidas, type ImagenNombre } from "../data/medidas.ts";
 
+export function esImagenNombre(nombre: string | null | undefined): nombre is ImagenNombre {
+  return !!nombre && Object.prototype.hasOwnProperty.call(medidas, nombre);
+}
+
+export function fotoDe(imagen: ImagenNombre | null, imagenUrl: string | null) {
+  if (imagenUrl) return { src: imagenUrl, width: 928, height: 1160 };
+  if (imagen) return fuentes(imagen);
+  return null;
+}
+
 export function fuentes(nombre: ImagenNombre) {
   const base = import.meta.env.BASE_URL;
   if (nombre === "hero") {

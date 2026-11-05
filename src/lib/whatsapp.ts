@@ -1,10 +1,10 @@
 import { copy } from "../content/es.ts";
-import { site } from "../config.ts";
 import { datoVisible } from "./dato.ts";
+import { leerContenido } from "./contenido.ts";
 
 /** Dígitos del número solo si deja de estar pendiente. */
 export function numeroWhatsapp(): string | null {
-  const visible = datoVisible(site.whatsapp);
+  const visible = datoVisible(leerContenido().site.whatsapp);
   if (!visible) return null;
   const digits = visible.replace(/\D/g, "");
   if (digits.length < 8) return null;
@@ -20,7 +20,7 @@ export function whatsappUrl(mensaje: string): string {
 }
 
 export function instagramHref(): string | null {
-  const value = datoVisible(site.instagram);
+  const value = datoVisible(leerContenido().site.instagram);
   if (!value) return null;
   if (/^https?:\/\//i.test(value)) return value;
   return `https://instagram.com/${value.replace(/^@/, "")}`;

@@ -2,7 +2,8 @@ import { Gift, ShieldCheck, Truck, Undo2 } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import type { LucideIcon } from "lucide-react";
 import { copy } from "../content/es.ts";
-import { comerciales } from "../config.ts";
+import { comerciales as comercialesLocal } from "../config.ts";
+import { useContenido } from "../lib/contenido.ts";
 import { datoVisible } from "../lib/dato.ts";
 
 type Item = {
@@ -14,7 +15,7 @@ type Item = {
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-function items(): Item[] {
+function items(comerciales: typeof comercialesLocal): Item[] {
   const lista: Item[] = [];
   const envio = datoVisible(comerciales.envioGratisDesde);
   const descuento = datoVisible(comerciales.descuentoPrimeraCompra);
@@ -50,7 +51,8 @@ function items(): Item[] {
 
 export function Beneficios() {
   const reduce = useReducedMotion();
-  const lista = items();
+  const { comerciales } = useContenido();
+  const lista = items(comerciales);
   if (lista.length === 0) return null;
 
   const columnas = lista.length === 1 ? "grid-cols-1" : "grid-cols-2";

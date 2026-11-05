@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { copy } from "../content/es.ts";
-import { site } from "../config.ts";
+import { useContenido } from "../lib/contenido.ts";
 import { datoVisible } from "../lib/dato.ts";
 import { instagramHref, mensajeContacto, numeroWhatsapp, whatsappUrl } from "../lib/whatsapp.ts";
 import { Encabezado } from "./Encabezado.tsx";
@@ -11,6 +11,7 @@ export function Contacto() {
   const [pieza, setPieza] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
+  const { site } = useContenido();
   const numero = numeroWhatsapp();
   const instagram = instagramHref();
 

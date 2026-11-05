@@ -10,17 +10,18 @@ export const categorias = [
   "Regalos",
 ] as const;
 
-export type Categoria = (typeof categorias)[number];
+export type Categoria = string;
 export type Filtro = "Todos" | Categoria;
 
 export type Producto = {
-  id: keyof typeof copy.productos;
+  id: string;
   nombre: string;
   categoria: Categoria;
   material: string;
   descripcion: string;
   precio: string;
-  imagen: ImagenNombre;
+  imagen: ImagenNombre | null;
+  imagenUrl: string | null;
   alt: string;
 };
 
@@ -45,6 +46,7 @@ export const productos: Producto[] = ficha.map((item) => {
     descripcion: texto.frase,
     precio: copy.catalogo.precio,
     imagen: item.imagen,
+    imagenUrl: null,
     alt: texto.alt,
   };
 });

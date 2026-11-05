@@ -1,17 +1,20 @@
-import type { Categoria } from "./productos.ts";
+import { categorias } from "./productos.ts";
 import type { ImagenNombre } from "./medidas.ts";
 import { copy } from "../content/es.ts";
 
+type Nombre = (typeof categorias)[number];
+
 export type Coleccion = {
   numero: string;
-  nombre: Categoria;
+  nombre: string;
   texto: string;
-  imagen: ImagenNombre;
+  imagen: ImagenNombre | null;
+  imagenUrl: string | null;
   alt: string;
   posicion: string;
 };
 
-const base: { numero: string; nombre: Categoria; imagen: ImagenNombre; posicion: string }[] = [
+const base: { numero: string; nombre: Nombre; imagen: ImagenNombre; posicion: string }[] = [
   { numero: "01", nombre: "Anillos", imagen: "col-anillos", posicion: "object-[center_42%]" },
   { numero: "02", nombre: "Collares", imagen: "col-collares", posicion: "object-[center_40%]" },
   { numero: "03", nombre: "Aretes", imagen: "col-aretes", posicion: "object-center" },
@@ -24,6 +27,7 @@ export const colecciones: Coleccion[] = base.map((item) => ({
   ...item,
   texto: copy.colecciones.items[item.nombre].linea,
   alt: copy.colecciones.items[item.nombre].alt,
+  imagenUrl: null,
 }));
 
 export const rejilla = [

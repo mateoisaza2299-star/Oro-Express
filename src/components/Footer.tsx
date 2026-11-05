@@ -1,8 +1,8 @@
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { copy } from "../content/es.ts";
-import { site } from "../config.ts";
 import type { Categoria } from "../data/productos.ts";
+import { useContenido } from "../lib/contenido.ts";
 import { datoVisible, redHref } from "../lib/dato.ts";
 import { irA } from "../lib/navegar.ts";
 import { numeroWhatsapp, whatsappUrl } from "../lib/whatsapp.ts";
@@ -12,15 +12,6 @@ type Enlace = {
   id: string;
   categoria?: Categoria;
 };
-
-const explorar: Enlace[] = [
-  { etiqueta: "Anillos", id: "catalogo", categoria: "Anillos" },
-  { etiqueta: "Collares", id: "catalogo", categoria: "Collares" },
-  { etiqueta: "Aretes", id: "catalogo", categoria: "Aretes" },
-  { etiqueta: "Pulseras", id: "catalogo", categoria: "Pulseras" },
-  { etiqueta: "Compromiso", id: "catalogo", categoria: "Compromiso" },
-  { etiqueta: "Regalos", id: "catalogo", categoria: "Regalos" },
-];
 
 const ayuda: Enlace[] = [
   { etiqueta: "Envíos", id: "envios" },
@@ -49,6 +40,13 @@ type Props = {
 };
 
 export function Footer({ onCategoria }: Props) {
+  const { site, colecciones } = useContenido();
+  const nombre = datoVisible(site.nombre);
+  const explorar: Enlace[] = colecciones.map((coleccion) => ({
+    etiqueta: coleccion.nombre,
+    id: "catalogo",
+    categoria: coleccion.nombre,
+  }));
   const lugar = [datoVisible(site.ciudad), datoVisible(site.pais)].filter(Boolean).join(", ");
   const redes = [
     { nombre: "Instagram", href: redHref(site.instagram, "instagram.com") },
@@ -77,9 +75,8 @@ export function Footer({ onCategoria }: Props) {
 
         <div className="mt-10 flex flex-col gap-6 border-t border-gold-line/40 pt-8 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="font-serif text-4xl tracking-[0.14em]">{site.nombre}</p>
+            <p className="font-serif text-4xl tracking-[0.14em]">{nombre}</p>
             {lugar ? <p className="mt-2 text-sm text-champagne">{lugar}</p> : null}
-            <p className="mt-2 text-sm text-ivory/90">{copy.footer.derechos(year, site.nombre)}</p>
           </div>
           {redes.length > 0 ? (
             <ul className="flex flex-wrap gap-x-5 gap-y-2" aria-label={copy.footer.pie}>
@@ -116,6 +113,15 @@ export function Footer({ onCategoria }: Props) {
             </button>
           </div>
         </div>
+        <p className="mt-8 flex flex-wrap items-center gap-x-4 border-t border-gold-line/30 pt-3 text-sm text-ivory/90">
+          <span>{copy.footer.derechos(year, nombre ?? "")}</span>
+          <a
+            href="#/admin"
+            className="inline-flex min-h-11 items-center text-[11px] tracking-[0.08em] text-[#9c968c] transition-colors hover:text-[#d8d2c8] hover:underline hover:underline-offset-4 focus-visible:text-[#d8d2c8] focus-visible:underline focus-visible:underline-offset-4"
+          >
+            Acceso
+          </a>
+        </p>
       </div>
     </footer>
   );
