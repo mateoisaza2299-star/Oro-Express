@@ -1,6 +1,7 @@
 import { AnimatePresence } from "motion/react";
-import { lazy, Suspense, useEffect, useState } from "react";
-import { useCargarContenido } from "./lib/contenido.ts";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { recargarContenido, useCargarContenido, useContenido } from "./lib/contenido.ts";
+import { datoVisible } from "./lib/dato.ts";
 import { Atelier } from "./components/Atelier.tsx";
 import { Beneficios } from "./components/Beneficios.tsx";
 import { Catalogo } from "./components/Catalogo.tsx";
@@ -30,12 +31,19 @@ export default function App() {
   const bloqueado = menuAbierto || pieza !== null;
   const admin = hash === "/admin";
   const pagina = !admin && esPagina(hash) ? hash : null;
+  const banner = datoVisible(useContenido().banner);
+  const eraAdmin = useRef(false);
 
   useEffect(() => {
     const sync = () => setHash(window.location.hash.replace("#", ""));
     window.addEventListener("hashchange", sync);
     return () => window.removeEventListener("hashchange", sync);
   }, []);
+
+  useEffect(() => {
+    if (eraAdmin.current && !admin) recargarContenido();
+    eraAdmin.current = admin;
+  }, [admin]);
 
   useEffect(() => {
     if (admin) {
@@ -70,7 +78,12 @@ export default function App() {
       </a>
       <Header menuAbierto={menuAbierto} onMenu={setMenuAbierto} inert={bloqueado} />
       {menuAbierto ? <MenuMovil onClose={() => setMenuAbierto(false)} /> : null}
-      <div id="contenido" tabIndex={-1} inert={bloqueado ? true : undefined}>
+      {banner ? (
+        <p className="fixed inset-x-0 top-16 z-30 bg-ink px-5 py-2.5 text-center text-xs tracking-[0.14em] text-ivory lg:top-[4.5rem]">
+          {banner}
+        </p>
+      ) : null}
+      <div id="contenido" tabIndex={-1} inert={bloqueado ? true : undefined} className={banner ? "pt-11" : undefined}>
         {pagina ? (
           <main>
             <Pagina id={pagina} />

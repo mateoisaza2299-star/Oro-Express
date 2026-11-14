@@ -1,21 +1,23 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { FormEvent, MouseEvent } from "react";
 import { supabase } from "../lib/supabase.ts";
+import { Ajustes } from "./Ajustes.tsx";
 import { Categorias } from "./Categorias.tsx";
-import { Negocio } from "./Negocio.tsx";
-import { Piezas } from "./Piezas.tsx";
-import { Portada } from "./Portada.tsx";
+import { Joyas } from "./Joyas.tsx";
+import { Promociones } from "./Promociones.tsx";
+import { Resumen } from "./Resumen.tsx";
 import { Aviso, Boton, Campo, Esqueleto, Toast } from "./ui.tsx";
 
 type Fase = "cargando" | "login" | "panel";
-type Tab = "piezas" | "categorias" | "negocio" | "portada";
+type Seccion = "resumen" | "joyas" | "categorias" | "promociones" | "ajustes";
 type AvisoEstado = { texto: string; error: boolean; detalle?: string } | null;
 
-const tabs: { id: Tab; etiqueta: string }[] = [
-  { id: "piezas", etiqueta: "Piezas" },
+const secciones: { id: Seccion; etiqueta: string }[] = [
+  { id: "resumen", etiqueta: "Resumen" },
+  { id: "joyas", etiqueta: "Joyas" },
   { id: "categorias", etiqueta: "Categorías" },
-  { id: "negocio", etiqueta: "Datos del negocio" },
-  { id: "portada", etiqueta: "Portada" },
+  { id: "promociones", etiqueta: "Promociones" },
+  { id: "ajustes", etiqueta: "Ajustes" },
 ];
 
 const AVISO_SESION = "Tu sesión terminó, entra de nuevo";
@@ -52,7 +54,7 @@ export default function Panel() {
       if (!permitido) {
         await supabase.auth.signOut();
         if (!vivo) return;
-        setAviso("Esta cuenta no tiene permiso");
+        setAviso("Sin acceso");
         cambiarFase("login");
         return;
       }
@@ -84,7 +86,7 @@ export default function Panel() {
     const permitido = await esAdmin();
     if (!permitido) {
       await supabase.auth.signOut();
-      setAviso("Esta cuenta no tiene permiso");
+      setAviso("Sin acceso");
       return;
     }
     cambiarFase("panel");
@@ -101,11 +103,13 @@ export default function Panel() {
 
   return (
     <div className="min-h-svh overflow-x-clip bg-ivory text-ink">
-      <div className="mx-auto w-full max-w-3xl min-w-0 px-5 py-8">
-        {fase === "cargando" ? <Esqueleto filas={3} /> : null}
-        {fase === "login" ? <Login aviso={aviso} onEntrar={entrar} /> : null}
-        {fase === "panel" ? <Editor onSalir={salir} onSesion={perderSesion} /> : null}
-      </div>
+      {fase === "cargando" ? (
+        <div className="mx-auto w-full max-w-3xl px-5 py-8">
+          <Esqueleto filas={3} />
+        </div>
+      ) : null}
+      {fase === "login" ? <Login aviso={aviso} onEntrar={entrar} /> : null}
+      {fase === "panel" ? <Editor onSalir={salir} onSesion={perderSesion} /> : null}
     </div>
   );
 }
@@ -124,7 +128,7 @@ function Login({ aviso, onEntrar }: { aviso: string; onEntrar: (correo: string, 
   }
 
   return (
-    <form className="mx-auto mt-10 w-full max-w-sm min-w-0" onSubmit={enviar}>
+    <form className="mx-auto mt-10 w-full max-w-sm min-w-0 px-5" onSubmit={enviar}>
       <h1 className="font-serif text-4xl text-ink">Acceso</h1>
       <Campo
         id="acceso-correo"
@@ -156,9 +160,10 @@ function Login({ aviso, onEntrar }: { aviso: string; onEntrar: (correo: string, 
 }
 
 function Editor({ onSalir, onSesion }: { onSalir: (sucio: boolean) => void; onSesion: () => void }) {
-  const [tab, setTab] = useState<Tab>("piezas");
+  const [seccion, setSeccion] = useState<Seccion>("resumen");
   const [aviso, setAviso] = useState<AvisoEstado>(null);
   const [sucio, setSucio] = useState(false);
+  const [crear, setCrear] = useState(0);
   const avisar = useCallback((texto: string, error = false, detalle?: string) => {
     setAviso({ texto, error, detalle });
   }, []);
@@ -193,11 +198,11 @@ function Editor({ onSalir, onSesion }: { onSalir: (sucio: boolean) => void; onSe
     return () => document.removeEventListener("visibilitychange", alVolver);
   }, [onSesion]);
 
-  function ir(siguiente: Tab) {
-    if (siguiente === tab) return;
+  function ir(siguiente: Seccion) {
+    if (siguiente === seccion) return;
     if (sucio && !window.confirm("Tienes cambios sin guardar")) return;
     setSucio(false);
-    setTab(siguiente);
+    setSeccion(siguiente);
   }
 
   function volver(event: MouseEvent<HTMLAnchorElement>) {
@@ -210,18 +215,43 @@ function Editor({ onSalir, onSesion }: { onSalir: (sucio: boolean) => void; onSe
     window.open(url.toString(), "_blank", "noopener,noreferrer");
   }
 
+  function nuevaJoya() {
+    if (sucio && !window.confirm("Tienes cambios sin guardar")) return;
+    setSucio(false);
+    setSeccion("joyas");
+    setCrear((valor) => valor + 1);
+  }
+
   return (
-    <div className="min-w-0">
+    <div className="lg:grid lg:min-h-svh lg:grid-cols-[15rem_minmax(0,1fr)]">
       {aviso ? <Toast texto={aviso.texto} detalle={aviso.detalle} error={aviso.error} /> : null}
-      <header className="min-w-0 border-b border-gold-line pb-4">
-        <h1 className="font-serif text-4xl text-ink">Panel</h1>
-        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+      <nav aria-label="Secciones" className="border-b border-gold-line px-4 py-4 lg:border-r lg:border-b-0 lg:px-5 lg:py-8">
+        <p className="font-serif text-3xl text-ink">Maison</p>
+        <div className="mt-4 grid grid-cols-2 gap-2 lg:grid-cols-1">
+          {secciones.map((item) => {
+            const activo = seccion === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                aria-current={activo ? "page" : undefined}
+                className={`min-h-11 px-3 text-left text-xs tracking-[0.12em] uppercase ${
+                  activo ? "bg-ink text-ivory" : "border border-gold-line text-ink"
+                }`}
+                onClick={() => ir(item.id)}
+              >
+                {item.etiqueta}
+              </button>
+            );
+          })}
+        </div>
+        <div className="mt-4 flex flex-col items-start">
           <button
             type="button"
             onClick={verSitio}
             className="inline-flex min-h-11 items-center text-xs tracking-[0.14em] text-gold uppercase"
           >
-            Ver el sitio
+            Ver sitio
           </button>
           <a
             href="#inicio"
@@ -238,33 +268,15 @@ function Editor({ onSalir, onSesion }: { onSalir: (sucio: boolean) => void; onSe
             Cerrar sesión
           </button>
         </div>
-      </header>
-      <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4" role="tablist" aria-label="Secciones del panel">
-        {tabs.map((item) => {
-          const activo = tab === item.id;
-          return (
-            <button
-              key={item.id}
-              type="button"
-              role="tab"
-              id={`tab-${item.id}`}
-              aria-selected={activo}
-              aria-controls={`panel-${item.id}`}
-              className={`min-h-11 min-w-0 px-1.5 text-center text-[11px] leading-tight tracking-[0.06em] break-words uppercase sm:px-2 sm:text-xs sm:tracking-[0.12em] ${
-                activo ? "bg-ink text-ivory" : "border border-gold-line text-ink"
-              }`}
-              onClick={() => ir(item.id)}
-            >
-              {item.etiqueta}
-            </button>
-          );
-        })}
-      </div>
-      <div role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`} className="min-w-0">
-        {tab === "piezas" ? <Piezas avisar={avisar} onSucio={onSucio} onSesion={onSesion} /> : null}
-        {tab === "categorias" ? <Categorias avisar={avisar} onSucio={onSucio} onSesion={onSesion} /> : null}
-        {tab === "negocio" ? <Negocio avisar={avisar} onSucio={onSucio} onSesion={onSesion} /> : null}
-        {tab === "portada" ? <Portada avisar={avisar} onSucio={onSucio} onSesion={onSesion} /> : null}
+      </nav>
+      <div className="min-w-0 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
+        {seccion === "resumen" ? <Resumen onNueva={nuevaJoya} onVerSitio={verSitio} onSesion={onSesion} /> : null}
+        <div hidden={seccion !== "joyas"}>
+          <Joyas avisar={avisar} onSucio={onSucio} onSesion={onSesion} crear={crear} activo={seccion === "joyas"} />
+        </div>
+        {seccion === "categorias" ? <Categorias avisar={avisar} onSucio={onSucio} onSesion={onSesion} /> : null}
+        {seccion === "promociones" ? <Promociones avisar={avisar} onSucio={onSucio} onSesion={onSesion} /> : null}
+        {seccion === "ajustes" ? <Ajustes avisar={avisar} onSucio={onSucio} onSesion={onSesion} /> : null}
       </div>
     </div>
   );

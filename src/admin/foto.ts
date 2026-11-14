@@ -2,9 +2,10 @@ import { supabase, supabaseAnon, supabaseUrl } from "../lib/supabase.ts";
 
 const BUCKET = "joyas";
 const MARCA = `/storage/v1/object/public/${BUCKET}/`;
-const ANCHO_MAX = 1200;
-const CALIDAD = 0.82;
+const LADO_MAX = 1600;
+const CALIDAD = 0.8;
 const LIMITE_BYTES = 5 * 1024 * 1024;
+const TOPE_ORIGINAL = 20 * 1024 * 1024;
 
 const tipos = new Set(["image/jpeg", "image/png", "image/webp"]);
 
@@ -17,12 +18,16 @@ export function validarArchivo(archivo: File): string | null {
   const tipo = archivo.type.toLowerCase();
   const pareceImagen = tipo.startsWith("image/") || /\.(jpe?g|png|webp|gif|avif|heic)$/i.test(archivo.name);
   if (!pareceImagen) return "El archivo no es una imagen.";
-  if (archivo.size > LIMITE_BYTES) return "La foto pasa de 5 MB. Elige una más liviana.";
+  if (archivo.size > TOPE_ORIGINAL) return "La foto es demasiado pesada. Elige una más liviana.";
   if (!esFotoAdmitida(archivo)) return "Usa una foto JPG, PNG o WebP.";
   return null;
 }
 
-export async function subirFoto(archivo: File, onProgreso?: (fraccion: number) => void): Promise<string> {
+export async function subirFoto(
+  archivo: File,
+  onProgreso?: (fraccion: number) => void,
+  carpeta?: string,
+): Promise<string> {
   const motivo = validarArchivo(archivo);
   if (motivo) throw new Error(motivo);
   onProgreso?.(0.05);
@@ -35,7 +40,7 @@ export async function subirFoto(archivo: File, onProgreso?: (fraccion: number) =
     (vencida as Error & { code?: string }).code = "SESION";
     throw vencida;
   }
-  const ruta = `${crypto.randomUUID()}.webp`;
+  const ruta = rutaDe(carpeta);
   const cuerpo = new FormData();
   cuerpo.append("cacheControl", "3600");
   cuerpo.append("", new File([blob], ruta, { type: "image/webp" }));
@@ -77,6 +82,33 @@ export async function subirFoto(archivo: File, onProgreso?: (fraccion: number) =
   return data.publicUrl;
 }
 
+export async function subirFotoDeJoya(
+  archivo: File,
+  joyaId: string,
+  onProgreso?: (fraccion: number) => void,
+): Promise<{ url: string; path: string }> {
+  const url = await subirFoto(archivo, onProgreso, joyaId);
+  const path = rutaEnBucket(url);
+  if (!path) throw new Error("No se pudo subir la foto.");
+  return { url, path };
+}
+
+export async function borrarRutas(rutas: Array<string | null | undefined>) {
+  const unicas = [...new Set(rutas.filter((ruta): ruta is string => Boolean(ruta)))];
+  if (!unicas.length) return;
+  try {
+    await supabase.storage.from(BUCKET).remove(unicas);
+  } catch {
+    // Si el archivo ya no está, la ficha sigue guardada.
+  }
+}
+
+function rutaDe(carpeta?: string) {
+  const nombre = `${crypto.randomUUID()}.webp`;
+  const limpia = carpeta?.replace(/^\/+|\/+$/g, "");
+  return limpia ? `${limpia}/${nombre}` : nombre;
+}
+
 export async function borrarFoto(url: string | null | undefined) {
   const ruta = rutaEnBucket(url);
   if (!ruta) return;
@@ -103,8 +135,9 @@ export function rutaEnBucket(url: string | null | undefined): string | null {
 async function aWebp(archivo: File): Promise<Blob> {
   const bitmap = await createImageBitmap(archivo);
   try {
-    const ancho = Math.max(1, Math.min(ANCHO_MAX, bitmap.width));
-    const alto = Math.max(1, Math.round(bitmap.height * (ancho / bitmap.width)));
+    const escala = Math.min(1, LADO_MAX / Math.max(bitmap.width, bitmap.height));
+    const ancho = Math.max(1, Math.round(bitmap.width * escala));
+    const alto = Math.max(1, Math.round(bitmap.height * escala));
     const canvas = document.createElement("canvas");
     canvas.width = ancho;
     canvas.height = alto;
@@ -117,6 +150,7 @@ async function aWebp(archivo: File): Promise<Blob> {
       canvas.toBlob((salida) => resolve(salida), "image/webp", CALIDAD);
     });
     if (!blob) throw new Error("No se pudo preparar la foto.");
+    if (blob.size > LIMITE_BYTES) throw new Error("La foto pasa de 5 MB. Elige una más liviana.");
     return blob;
   } finally {
     bitmap.close();

@@ -104,7 +104,15 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                             {producto.nombre}
                           </span>
                         </span>
-                        <span className="shrink-0 text-xs tracking-[0.16em] text-ink uppercase">{producto.precio}</span>
+                        <span className="flex shrink-0 flex-col items-end text-right">
+                          {producto.promoEtiqueta ? (
+                            <span className="text-[10px] tracking-[0.14em] text-gold uppercase">{producto.promoEtiqueta}</span>
+                          ) : null}
+                          {producto.precioAnterior ? (
+                            <span className="text-[10px] tracking-[0.12em] text-muted line-through">{producto.precioAnterior}</span>
+                          ) : null}
+                          <span className="text-xs tracking-[0.16em] text-ink uppercase">{producto.precio}</span>
+                        </span>
                       </span>
                       <span className="mt-3 block text-xs tracking-[0.16em] text-muted uppercase">{copy.catalogo.ver}</span>
                     </button>

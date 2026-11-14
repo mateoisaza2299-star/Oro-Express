@@ -23,6 +23,10 @@ export type Producto = {
   imagen: ImagenNombre | null;
   imagenUrl: string | null;
   alt: string;
+  precioAnterior?: string | null;
+  promoEtiqueta?: string | null;
+  detalle?: string;
+  galeria?: string[];
 };
 
 const ficha: { id: keyof typeof copy.productos; categoria: Categoria; imagen: ImagenNombre }[] = [

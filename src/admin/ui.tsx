@@ -211,6 +211,31 @@ export function Barra({ children }: { children: ReactNode }) {
   );
 }
 
+export function Interruptor({
+  activo,
+  etiqueta,
+  onChange,
+}: {
+  activo: boolean;
+  etiqueta: string;
+  onChange: (valor: boolean) => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={activo}
+      aria-label={etiqueta}
+      onClick={() => onChange(!activo)}
+      className="inline-flex min-h-11 min-w-11 items-center justify-end"
+    >
+      <span className={`relative h-7 w-12 rounded-full ${activo ? "bg-ink" : "border border-gold-line bg-paper"}`}>
+        <span className={`absolute top-0.5 h-6 w-6 rounded-full ${activo ? "left-5 bg-ivory" : "left-0.5 bg-ink"}`} />
+      </span>
+    </button>
+  );
+}
+
 export function Progreso({ valor }: { valor: number }) {
   const porcentaje = Math.max(0, Math.min(100, Math.round(valor * 100)));
   return (
