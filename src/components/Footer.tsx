@@ -113,8 +113,11 @@ export function Footer({ onCategoria }: Props) {
             </button>
           </div>
         </div>
-        <p className="mt-8 border-t border-gold-line/30 pt-3 text-sm text-ivory/90">
-          {copy.footer.derechos(year, nombre ?? "")}
+        <p className="mt-8 flex items-center justify-between gap-4 border-t border-gold-line/30 pt-3 text-sm text-ivory/90">
+          <span>{copy.footer.derechos(year, nombre ?? "")}</span>
+          <a href="#/admin" rel="nofollow" aria-label="Acceso al panel" className="inline-flex min-h-11 shrink-0 items-center">
+            Acceso
+          </a>
         </p>
       </div>
     </footer>
