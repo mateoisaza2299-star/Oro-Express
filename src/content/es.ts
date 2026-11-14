@@ -33,6 +33,8 @@ export const copy = {
     galeria: "Imagen 1 de 1",
     whatsappFlotante: "Pedir asesoría por WhatsApp",
     whatsappCorto: "WhatsApp",
+    instalar: "Instalar app",
+    sinConexion: "Sin conexión",
   },
   hero: {
     kicker: "Con calma.",

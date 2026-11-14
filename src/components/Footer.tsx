@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { copy } from "../content/es.ts";
 import type { Categoria } from "../data/productos.ts";
 import { useContenido } from "../lib/contenido.ts";
@@ -104,6 +104,7 @@ export function Footer({ onCategoria }: Props) {
             >
               {copy.footer.whatsapp}
             </a>
+            <InstalarApp />
             <button
               type="button"
               className="inline-flex min-h-12 items-center text-xs tracking-[0.16em] text-champagne uppercase"
@@ -120,8 +121,83 @@ export function Footer({ onCategoria }: Props) {
           </a>
         </p>
       </div>
+      <AvisoOffline />
     </footer>
   );
+}
+
+type EventoInstalar = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+};
+
+function InstalarApp() {
+  const [evento, setEvento] = useState<EventoInstalar | null>(null);
+  const [instalada, setInstalada] = useState(() => enPantallaIndependiente());
+
+  useEffect(() => {
+    const preparar = (event: Event) => {
+      event.preventDefault();
+      setEvento(event as EventoInstalar);
+    };
+    const marcarInstalada = () => {
+      setInstalada(true);
+      setEvento(null);
+    };
+    window.addEventListener("beforeinstallprompt", preparar);
+    window.addEventListener("appinstalled", marcarInstalada);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", preparar);
+      window.removeEventListener("appinstalled", marcarInstalada);
+    };
+  }, []);
+
+  if (instalada || !evento) return null;
+
+  return (
+    <button
+      type="button"
+      className="inline-flex min-h-12 items-center text-xs tracking-[0.16em] text-champagne uppercase"
+      onClick={() => {
+        void evento.prompt().finally(() => {
+          setEvento(null);
+        });
+      }}
+    >
+      {copy.ui.instalar}
+    </button>
+  );
+}
+
+function AvisoOffline() {
+  const [offline, setOffline] = useState(() => !navigator.onLine);
+
+  useEffect(() => {
+    const enLinea = () => setOffline(false);
+    const sinRed = () => setOffline(true);
+    window.addEventListener("online", enLinea);
+    window.addEventListener("offline", sinRed);
+    return () => {
+      window.removeEventListener("online", enLinea);
+      window.removeEventListener("offline", sinRed);
+    };
+  }, []);
+
+  if (!offline) return null;
+
+  return (
+    <p
+      role="status"
+      className="fixed bottom-4 left-4 z-30 inline-flex min-h-11 items-center border border-gold-line bg-ivory px-4 text-xs tracking-[0.14em] text-ink uppercase"
+    >
+      {copy.ui.sinConexion}
+    </p>
+  );
+}
+
+function enPantallaIndependiente() {
+  const nav = navigator as Navigator & { standalone?: boolean };
+  return window.matchMedia("(display-mode: standalone)").matches || nav.standalone === true;
 }
 
 function Columna({ titulo, enlaces, onIr }: { titulo: string; enlaces: Enlace[]; onIr: (enlace: Enlace) => void }) {
