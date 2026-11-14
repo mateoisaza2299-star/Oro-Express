@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { copy } from "../content/es.ts";
 import { type Filtro, type Producto } from "../data/productos.ts";
-import { useContenido } from "../lib/contenido.ts";
+import { compararPiezas, useContenido } from "../lib/contenido.ts";
 import { fotoDe } from "../lib/imagen.ts";
 import { useLite } from "../lib/useLite.ts";
 import { Encabezado } from "./Encabezado.tsx";
@@ -191,13 +191,7 @@ function primeroEnCategoria(lista: Producto[]): Producto[] {
   }
   const ordenados = new Map<string, Producto[]>();
   for (const [categoria, grupo] of grupos) {
-    const recomendadas: Producto[] = [];
-    const resto: Producto[] = [];
-    for (const producto of grupo) {
-      if (producto.destacada) recomendadas.push(producto);
-      else resto.push(producto);
-    }
-    ordenados.set(categoria, recomendadas.length ? [...recomendadas, ...resto] : grupo);
+    ordenados.set(categoria, [...grupo].sort(compararPiezas));
   }
   const cursor = new Map<string, number>();
   return lista.map((producto) => {

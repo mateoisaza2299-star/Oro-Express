@@ -28,6 +28,7 @@ export type Producto = {
   detalle?: string;
   galeria?: string[];
   destacada?: boolean;
+  creada?: string | null;
 };
 
 const ficha: { id: keyof typeof copy.productos; categoria: Categoria; imagen: ImagenNombre }[] = [

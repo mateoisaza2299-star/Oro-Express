@@ -5,7 +5,6 @@ import { supabase } from "../lib/supabase.ts";
 import type { PanelProps } from "./comun.ts";
 import { esSesionVencida, textoError } from "./errores.ts";
 import { borrarFoto, subirFoto, validarArchivo } from "./foto.ts";
-import { moverElemento } from "./orden.ts";
 import { Boton, ErrorCarga, Esqueleto, Interruptor, Progreso, VistaFoto } from "./ui.tsx";
 
 const LIMITE_NOMBRE = 80;
@@ -43,9 +42,7 @@ export function Categorias({ avisar, onSucio, onSesion }: PanelProps) {
   const [fallo, setFallo] = useState("");
   const [intento, setIntento] = useState(0);
   const [guardando, setGuardando] = useState(false);
-  const [ordenando, setOrdenando] = useState(false);
   const [progreso, setProgreso] = useState<number | null>(null);
-  const [arrastre, setArrastre] = useState<string | null>(null);
 
   useEffect(() => {
     let vivo = true;
@@ -133,41 +130,6 @@ export function Categorias({ avisar, onSucio, onSesion }: PanelProps) {
     await borrarFoto(cat.imagen_url);
     setCategorias((lista) => lista.filter((item) => item.id !== cat.id));
     avisar("Categoría eliminada.");
-  }
-
-  async function guardarOrden(siguiente: Categoria[]) {
-    const previa = categorias;
-    const numerada = siguiente.map((item, indice) => ({ ...item, orden: indice }));
-    const antes = new Map(categorias.map((item) => [item.id, item.orden]));
-    const cambios = numerada.filter((item) => antes.get(item.id) !== item.orden);
-    if (!cambios.length) return;
-    setOrdenando(true);
-    setCategorias(numerada);
-    const resultados = await Promise.all(
-      cambios.map((item) => supabase.from("categorias").update({ orden: item.orden }).eq("id", item.id)),
-    );
-    setOrdenando(false);
-    const error = resultados.find((resultado) => resultado.error)?.error;
-    if (error) {
-      setCategorias(previa);
-      if (esSesionVencida(error)) onSesion();
-      else avisar("No se pudo guardar el orden.", true, textoError(error));
-    }
-  }
-
-  function mover(indice: number, direccion: -1 | 1) {
-    const destino = indice + direccion;
-    if (destino < 0 || destino >= categorias.length) return;
-    void guardarOrden(moverElemento(categorias, indice, destino));
-  }
-
-  function soltar(sobre: string) {
-    if (!arrastre || arrastre === sobre) return;
-    const desde = categorias.findIndex((cat) => cat.id === arrastre);
-    const hacia = categorias.findIndex((cat) => cat.id === sobre);
-    setArrastre(null);
-    if (desde < 0 || hacia < 0) return;
-    void guardarOrden(moverElemento(categorias, desde, hacia));
   }
 
   async function guardar(event: FormEvent<HTMLFormElement>) {
@@ -308,15 +270,8 @@ export function Categorias({ avisar, onSucio, onSesion }: PanelProps) {
         <p className="mt-6 text-sm text-muted">Todavía no hay categorías.</p>
       ) : (
         <ul className="mt-4 border-t border-gold-line">
-          {categorias.map((cat, indice) => (
-            <li
-              key={cat.id}
-              draggable={!ordenando}
-              onDragStart={() => setArrastre(cat.id)}
-              onDragOver={(event) => event.preventDefault()}
-              onDrop={() => soltar(cat.id)}
-              className="border-b border-gold-line py-3"
-            >
+          {categorias.map((cat) => (
+            <li key={cat.id} className="border-b border-gold-line py-3">
               <div className="flex min-w-0 gap-3">
                 <span className="relative block aspect-[4/5] w-14 shrink-0 overflow-hidden bg-paper">
                   <VistaFoto archivo={null} url={urlCategoria(cat)} className="absolute inset-0 h-full w-full object-cover" />
@@ -337,12 +292,6 @@ export function Categorias({ avisar, onSucio, onSesion }: PanelProps) {
                 />
                 <Boton className="w-auto" onClick={() => abrir(desdeCategoria(cat))}>
                   Editar
-                </Boton>
-                <Boton className="w-auto" secundario disabled={ordenando || indice === 0} onClick={() => mover(indice, -1)}>
-                  Subir
-                </Boton>
-                <Boton className="w-auto" secundario disabled={ordenando || indice === categorias.length - 1} onClick={() => mover(indice, 1)}>
-                  Bajar
                 </Boton>
                 <Boton className="w-auto" secundario onClick={() => void eliminar(cat)}>
                   Eliminar

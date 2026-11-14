@@ -41,8 +41,9 @@ export function Promociones({ avisar, onSucio, onSesion }: PanelProps) {
     let vivo = true;
     void supabase
       .from("joyas")
-      .select("id,nombre,precio,precio_promo,promo_etiqueta,promo_inicio,promo_fin,orden")
-      .order("orden", { ascending: true })
+      .select("id,nombre,precio,precio_promo,promo_etiqueta,promo_inicio,promo_fin")
+      .order("destacada", { ascending: false })
+      .order("created_at", { ascending: false })
       .then(({ data, error }) => {
         if (!vivo) return;
         if (error || !data) {

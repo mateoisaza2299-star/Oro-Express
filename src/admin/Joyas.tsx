@@ -9,14 +9,13 @@ import { useFocusTrap } from "../lib/useFocusTrap.ts";
 import type { PanelProps } from "./comun.ts";
 import { esSesionVencida, textoError } from "./errores.ts";
 import { borrarFoto, borrarRutas, rutaEnBucket, subirFotoDeJoya, validarArchivo } from "./foto.ts";
-import { moverElemento } from "./orden.ts";
 import { Boton, ErrorCarga, Esqueleto, Interruptor, Progreso, VistaFoto } from "./ui.tsx";
 
 const LIMITE_NOMBRE = 120;
 const LIMITE_FRASE = 200;
 const LIMITE_DESCRIPCION = 2000;
 const COLUMNAS =
-  "id,categoria_id,nombre,frase,descripcion,alt,material,referencia,precio,precio_promo,promo_etiqueta,promo_inicio,promo_fin,stock,imagen_url,imagen_local,destacada,activa,orden";
+  "id,categoria_id,nombre,frase,descripcion,alt,material,referencia,precio,precio_promo,promo_etiqueta,promo_inicio,promo_fin,stock,imagen_url,imagen_local,destacada,activa,orden,created_at";
 
 type Categoria = { id: string; nombre: string };
 
@@ -48,6 +47,7 @@ type Joya = {
   destacada: boolean;
   activa: boolean;
   orden: number;
+  created_at: string;
   fotos: FotoFila[];
 };
 
@@ -97,13 +97,11 @@ export function Joyas({ avisar, onSucio, onSesion, crear, activo }: PanelProps &
   const [fallo, setFallo] = useState("");
   const [intento, setIntento] = useState(0);
   const [guardando, setGuardando] = useState(false);
-  const [ordenando, setOrdenando] = useState(false);
   const [progreso, setProgreso] = useState<number | null>(null);
   const [fotoError, setFotoError] = useState<string | null>(null);
   const [busqueda, setBusqueda] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("");
   const [filtroEstado, setFiltroEstado] = useState<Filtro>("todas");
-  const [arrastre, setArrastre] = useState<string | null>(null);
   const [pedido, setPedido] = useState(0);
   const campoTicket = useRef(new Map<string, number>());
 
@@ -111,7 +109,7 @@ export function Joyas({ avisar, onSucio, onSesion, crear, activo }: PanelProps &
     let vivo = true;
     void Promise.all([
       supabase.from("categorias").select("id,nombre,orden").order("orden", { ascending: true }),
-      supabase.from("joyas").select(COLUMNAS).order("orden", { ascending: true }),
+      supabase.from("joyas").select(COLUMNAS).order("destacada", { ascending: false }).order("created_at", { ascending: false }),
       supabase.from("joya_fotos").select("id,joya_id,url,path,orden,es_principal").order("orden", { ascending: true }),
     ]).then(([cats, joyas, fotos]) => {
       if (!vivo) return;
@@ -136,7 +134,7 @@ export function Joyas({ avisar, onSucio, onSesion, crear, activo }: PanelProps &
         porJoya.set(joyaId, lista);
       }
       setCategorias(cats.data.map((fila) => ({ id: String(fila.id), nombre: String(fila.nombre) })));
-      setPiezas(joyas.data.map((fila) => normalizar(fila, porJoya.get(String(fila.id)) ?? [])));
+      setPiezas(joyas.data.map((fila) => normalizar(fila, porJoya.get(String(fila.id)) ?? [])).sort(compararJoyas));
       setListo(true);
     });
     return () => {
@@ -193,7 +191,7 @@ export function Joyas({ avisar, onSucio, onSesion, crear, activo }: PanelProps &
   }
 
   function aplicarCambio(id: string, cambio: Partial<Pick<Joya, "activa" | "destacada">>) {
-    setPiezas((lista) => lista.map((item) => (item.id === id ? { ...item, ...cambio } : item)));
+    setPiezas((lista) => lista.map((item) => (item.id === id ? { ...item, ...cambio } : item)).sort(compararJoyas));
     setBorrador((actual) => (actual?.id === id ? { ...actual, ...cambio } : actual));
   }
 
@@ -256,39 +254,6 @@ export function Joyas({ avisar, onSucio, onSesion, crear, activo }: PanelProps &
     avisar("Joya eliminada.");
   }
 
-  async function guardarOrden(siguiente: Joya[]) {
-    const previa = piezas;
-    const numerada = siguiente.map((item, indice) => ({ ...item, orden: indice }));
-    const antes = new Map(piezas.map((item) => [item.id, item.orden]));
-    const cambios = numerada.filter((item) => antes.get(item.id) !== item.orden);
-    if (!cambios.length) return;
-    setOrdenando(true);
-    setPiezas(numerada);
-    const resultados = await Promise.all(
-      cambios.map((item) => supabase.from("joyas").update({ orden: item.orden }).eq("id", item.id)),
-    );
-    setOrdenando(false);
-    const error = resultados.find((resultado) => resultado.error)?.error;
-    if (error) {
-      setPiezas(previa);
-      if (esSesionVencida(error)) onSesion();
-      else avisar("No se pudo guardar el orden.", true, textoError(error));
-    }
-  }
-
-  function soltar(sobre: string) {
-    if (!arrastre || arrastre === sobre) return;
-    const ids = visibles.map((item) => item.id);
-    const desde = ids.indexOf(arrastre);
-    const hacia = ids.indexOf(sobre);
-    setArrastre(null);
-    if (desde < 0 || hacia < 0) return;
-    const reorden = moverElemento(ids, desde, hacia);
-    const cola = [...reorden];
-    const siguiente = piezas.map((item) => (ids.includes(item.id) ? piezas.find((pieza) => pieza.id === cola.shift()) ?? item : item));
-    void guardarOrden(siguiente);
-  }
-
   async function guardar(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!borrador || guardando) return;
@@ -347,7 +312,7 @@ export function Joyas({ avisar, onSucio, onSesion, crear, activo }: PanelProps &
       setPiezas((lista) => {
         const existe = lista.some((item) => item.id === guardada.id);
         const siguiente = existe ? lista.map((item) => (item.id === guardada.id ? guardada : item)) : [...lista, guardada];
-        return siguiente.sort((a, b) => a.orden - b.orden);
+        return siguiente.sort(compararJoyas);
       });
       setBorrador(null);
       setOrigen("");
@@ -451,14 +416,7 @@ export function Joyas({ avisar, onSucio, onSesion, crear, activo }: PanelProps &
             const categoria = categorias.find((cat) => cat.id === pieza.categoria_id)?.nombre ?? "Sin categoría";
             const promo = estadoPromo(pieza) === "vigente" && pieza.precio_promo != null && pieza.precio != null;
             return (
-              <li
-                key={pieza.id}
-                draggable={!ordenando}
-                onDragStart={() => setArrastre(pieza.id)}
-                onDragOver={(event) => event.preventDefault()}
-                onDrop={() => soltar(pieza.id)}
-                className="border-b border-gold-line py-3"
-              >
+              <li key={pieza.id} className="border-b border-gold-line py-3">
                 <div className="flex min-w-0 gap-3">
                   <span className="relative block aspect-[4/5] w-14 shrink-0 overflow-hidden bg-paper">
                     <VistaFoto archivo={null} url={miniatura(pieza)} className="absolute inset-0 h-full w-full object-cover" />
@@ -620,15 +578,6 @@ function Formulario({
     ponerFotos(borrador.fotos.map((foto) => ({ ...foto, esPrincipal: foto.key === key && !foto.quitar })));
   }
 
-  function moverFoto(key: string, direccion: -1 | 1) {
-    const indice = visibles.findIndex((foto) => foto.key === key);
-    const destino = indice + direccion;
-    if (indice < 0 || destino < 0 || destino >= visibles.length) return;
-    const reorden = moverElemento(visibles, indice, destino);
-    const ocultas = borrador.fotos.filter((foto) => foto.quitar);
-    ponerFotos([...reorden, ...ocultas]);
-  }
-
   return (
     <div ref={ref} role="dialog" aria-modal="true" aria-labelledby="titulo-joya" className="fixed inset-0 z-50 flex justify-end bg-ink/40">
       <button type="button" className="absolute inset-0 cursor-default" aria-label="Cerrar el formulario" onClick={onCerrar} />
@@ -724,7 +673,7 @@ function Formulario({
             ) : null}
             {visibles.length === 0 ? <p className="mt-3 text-sm text-muted">Esta joya no tiene fotos.</p> : null}
             <ul className="mt-3">
-              {visibles.map((foto, indice) => (
+              {visibles.map((foto) => (
                 <li key={foto.key} className="flex min-w-0 items-center gap-3 border-t border-gold-line py-3">
                   <span className="relative block aspect-[4/5] w-14 shrink-0 overflow-hidden bg-paper">
                     <VistaFoto archivo={foto.archivo} url={foto.url} className="absolute inset-0 h-full w-full object-cover" />
@@ -739,17 +688,6 @@ function Formulario({
                       }`}
                     >
                       Principal
-                    </button>
-                    <button type="button" disabled={indice === 0} onClick={() => moverFoto(foto.key, -1)} className="inline-flex min-h-11 items-center px-3 text-xs tracking-[0.12em] text-ink uppercase disabled:opacity-40">
-                      Subir
-                    </button>
-                    <button
-                      type="button"
-                      disabled={indice === visibles.length - 1}
-                      onClick={() => moverFoto(foto.key, 1)}
-                      className="inline-flex min-h-11 items-center px-3 text-xs tracking-[0.12em] text-ink uppercase disabled:opacity-40"
-                    >
-                      Bajar
                     </button>
                     <button type="button" onClick={() => quitarFoto(foto.key)} className="inline-flex min-h-11 items-center px-3 text-xs tracking-[0.12em] text-gold uppercase">
                       Quitar
@@ -1195,6 +1133,7 @@ function normalizar(fila: {
   destacada: unknown;
   activa: unknown;
   orden: unknown;
+  created_at: unknown;
 }, fotos: FotoFila[]): Joya {
   return {
     id: String(fila.id),
@@ -1216,8 +1155,15 @@ function normalizar(fila: {
     destacada: fila.destacada === true,
     activa: fila.activa !== false,
     orden: Number(fila.orden) || 0,
+    created_at: fila.created_at ? String(fila.created_at) : "",
     fotos,
   };
+}
+
+function compararJoyas(a: Joya, b: Joya) {
+  const destacada = Number(b.destacada) - Number(a.destacada);
+  if (destacada) return destacada;
+  return (Date.parse(b.created_at) || 0) - (Date.parse(a.created_at) || 0);
 }
 
 function entero(valor: unknown): number | null {

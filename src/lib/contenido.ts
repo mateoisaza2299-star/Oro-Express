@@ -119,7 +119,7 @@ type FilaJoya = {
   imagen_url: string | null;
   imagen_local: string | null;
   destacada: boolean | null;
-  orden: number | null;
+  created_at: string | null;
 };
 
 type FilaFoto = {
@@ -141,10 +141,11 @@ async function traer(): Promise<Contenido | null> {
     supabase
       .from("joyas")
       .select(
-        "id,categoria_id,nombre,frase,descripcion,alt,material,precio,precio_promo,promo_etiqueta,promo_inicio,promo_fin,imagen_url,imagen_local,destacada,orden",
+        "id,categoria_id,nombre,frase,descripcion,alt,material,precio,precio_promo,promo_etiqueta,promo_inicio,promo_fin,imagen_url,imagen_local,destacada,created_at",
       )
       .eq("activa", true)
-      .order("orden", { ascending: true }),
+      .order("destacada", { ascending: false })
+      .order("created_at", { ascending: false }),
     supabase.from("ajustes").select("clave,valor"),
     supabase.from("joya_fotos").select("joya_id,url,orden,es_principal").order("orden", { ascending: true }),
   ]);
@@ -191,7 +192,9 @@ function armar(cats: FilaCategoria[], joyas: FilaJoya[], ajustes: FilaAjuste[], 
     banner: leer("banner_promo", ""),
     categorias: cats.map((cat) => cat.nombre),
     colecciones: cats.map((cat, index) => aColeccion(cat, index)),
-    productos: joyas.map((joya) => aProducto(joya, nombres.get(joya.categoria_id) ?? "", fotos)),
+    productos: joyas
+      .map((joya) => aProducto(joya, nombres.get(joya.categoria_id) ?? "", fotos))
+      .sort(compararPiezas),
   };
 }
 
@@ -236,7 +239,14 @@ function aProducto(joya: FilaJoya, categoria: string, fotos: FilaFoto[]): Produc
     alt: limpio(joya.alt) ?? joya.nombre,
     galeria,
     destacada: joya.destacada === true,
+    creada: joya.created_at,
   };
+}
+
+export function compararPiezas(a: Producto, b: Producto) {
+  const destacada = Number(b.destacada === true) - Number(a.destacada === true);
+  if (destacada) return destacada;
+  return (Date.parse(b.creada ?? "") || 0) - (Date.parse(a.creada ?? "") || 0);
 }
 
 function galeriaDe(id: string, fotos: FilaFoto[], imagenUrl: string | null): string[] {
