@@ -17,7 +17,8 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
   const lite = useLite();
   const { categorias, productos } = useContenido();
   const filtros: Filtro[] = ["Todos", ...categorias];
-  const visibles = filtro === "Todos" ? productos : productos.filter((producto) => producto.categoria === filtro);
+  const lista = filtro === "Todos" ? productos : productos.filter((producto) => producto.categoria === filtro);
+  const visibles = primeroEnCategoria(lista);
 
   return (
     <section id="catalogo" className="scroll-mt-24 bg-ivory px-5 py-20 md:px-10 md:py-28" aria-labelledby="titulo-piezas">
@@ -61,7 +62,7 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
               const foto = fotoDe(producto.imagen, producto.imagenUrl);
               return (
                 <li key={producto.id}>
-                  <GlowCard>
+                  <GlowCard className={producto.destacada ? "ring-1 ring-gold-line" : ""}>
                     <button
                       type="button"
                       className="w-full text-left"
@@ -69,6 +70,11 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                       onClick={() => onAbrir(producto)}
                     >
                       <span className="relative block aspect-[4/5] overflow-hidden bg-paper">
+                        {producto.destacada ? (
+                          <span className="absolute top-2 left-2 z-10 max-w-[70%] bg-gold-line px-2 py-1 text-xs tracking-[0.14em] text-ivory uppercase">
+                            {copy.catalogo.recomendado}
+                          </span>
+                        ) : null}
                         {foto && lite ? (
                           <img
                             {...foto}
@@ -125,4 +131,30 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
       </div>
     </section>
   );
+}
+
+function primeroEnCategoria(lista: Producto[]): Producto[] {
+  const grupos = new Map<string, Producto[]>();
+  for (const producto of lista) {
+    const grupo = grupos.get(producto.categoria);
+    if (grupo) grupo.push(producto);
+    else grupos.set(producto.categoria, [producto]);
+  }
+  const ordenados = new Map<string, Producto[]>();
+  for (const [categoria, grupo] of grupos) {
+    const recomendadas: Producto[] = [];
+    const resto: Producto[] = [];
+    for (const producto of grupo) {
+      if (producto.destacada) recomendadas.push(producto);
+      else resto.push(producto);
+    }
+    ordenados.set(categoria, recomendadas.length ? [...recomendadas, ...resto] : grupo);
+  }
+  const cursor = new Map<string, number>();
+  return lista.map((producto) => {
+    const grupo = ordenados.get(producto.categoria) ?? [];
+    const indice = cursor.get(producto.categoria) ?? 0;
+    cursor.set(producto.categoria, indice + 1);
+    return grupo[indice] ?? producto;
+  });
 }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { FormEvent, MouseEvent } from "react";
+import type { FormEvent } from "react";
 import { supabase } from "../lib/supabase.ts";
 import { Ajustes } from "./Ajustes.tsx";
 import { Categorias } from "./Categorias.tsx";
@@ -205,10 +205,6 @@ function Editor({ onSalir, onSesion }: { onSalir: (sucio: boolean) => void; onSe
     setSeccion(siguiente);
   }
 
-  function volver(event: MouseEvent<HTMLAnchorElement>) {
-    if (sucio && !window.confirm("Tienes cambios sin guardar")) event.preventDefault();
-  }
-
   function verSitio() {
     const url = new URL(window.location.href);
     url.hash = "inicio";
@@ -253,13 +249,6 @@ function Editor({ onSalir, onSesion }: { onSalir: (sucio: boolean) => void; onSe
           >
             Ver sitio
           </button>
-          <a
-            href="#inicio"
-            onClick={volver}
-            className="inline-flex min-h-11 items-center text-xs tracking-[0.14em] text-gold uppercase"
-          >
-            Volver al sitio
-          </a>
           <button
             type="button"
             onClick={() => void onSalir(sucio)}
@@ -270,7 +259,7 @@ function Editor({ onSalir, onSesion }: { onSalir: (sucio: boolean) => void; onSe
         </div>
       </nav>
       <div className="min-w-0 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
-        {seccion === "resumen" ? <Resumen onNueva={nuevaJoya} onVerSitio={verSitio} onSesion={onSesion} /> : null}
+        {seccion === "resumen" ? <Resumen onNueva={nuevaJoya} onSesion={onSesion} /> : null}
         <div hidden={seccion !== "joyas"}>
           <Joyas avisar={avisar} onSucio={onSucio} onSesion={onSesion} crear={crear} activo={seccion === "joyas"} />
         </div>

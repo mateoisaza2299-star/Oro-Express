@@ -85,6 +85,7 @@ export const copy = {
     material: "Material y medidas por WhatsApp",
     una: "pieza",
     varias: "piezas",
+    recomendado: "Recomendado",
   },
   productos: {
     "prod-01": {

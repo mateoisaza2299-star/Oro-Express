@@ -215,11 +215,14 @@ export function Interruptor({
   activo,
   etiqueta,
   onChange,
+  dorado = false,
 }: {
   activo: boolean;
   etiqueta: string;
   onChange: (valor: boolean) => void;
+  dorado?: boolean;
 }) {
+  const encendido = dorado ? "bg-gold-line" : "bg-ink";
   return (
     <button
       type="button"
@@ -227,9 +230,9 @@ export function Interruptor({
       aria-checked={activo}
       aria-label={etiqueta}
       onClick={() => onChange(!activo)}
-      className="inline-flex min-h-11 min-w-11 items-center justify-end"
+      className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-end"
     >
-      <span className={`relative h-7 w-12 rounded-full ${activo ? "bg-ink" : "border border-gold-line bg-paper"}`}>
+      <span className={`relative h-7 w-12 rounded-full ${activo ? encendido : "border border-gold-line bg-paper"}`}>
         <span className={`absolute top-0.5 h-6 w-6 rounded-full ${activo ? "left-5 bg-ivory" : "left-0.5 bg-ink"}`} />
       </span>
     </button>

@@ -118,6 +118,7 @@ type FilaJoya = {
   promo_fin: string | null;
   imagen_url: string | null;
   imagen_local: string | null;
+  destacada: boolean | null;
   orden: number | null;
 };
 
@@ -140,7 +141,7 @@ async function traer(): Promise<Contenido | null> {
     supabase
       .from("joyas")
       .select(
-        "id,categoria_id,nombre,frase,descripcion,alt,material,precio,precio_promo,promo_etiqueta,promo_inicio,promo_fin,imagen_url,imagen_local,orden",
+        "id,categoria_id,nombre,frase,descripcion,alt,material,precio,precio_promo,promo_etiqueta,promo_inicio,promo_fin,imagen_url,imagen_local,destacada,orden",
       )
       .eq("activa", true)
       .order("orden", { ascending: true }),
@@ -234,6 +235,7 @@ function aProducto(joya: FilaJoya, categoria: string, fotos: FilaFoto[]): Produc
     imagenUrl: galeria[0] ?? imagenUrl,
     alt: limpio(joya.alt) ?? joya.nombre,
     galeria,
+    destacada: joya.destacada === true,
   };
 }
 

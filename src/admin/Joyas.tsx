@@ -1,4 +1,3 @@
-import { Star } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { copy } from "../content/es.ts";
@@ -106,6 +105,7 @@ export function Joyas({ avisar, onSucio, onSesion, crear, activo }: PanelProps &
   const [filtroEstado, setFiltroEstado] = useState<Filtro>("todas");
   const [arrastre, setArrastre] = useState<string | null>(null);
   const [pedido, setPedido] = useState(0);
+  const campoTicket = useRef(new Map<string, number>());
 
   useEffect(() => {
     let vivo = true;
@@ -192,51 +192,48 @@ export function Joyas({ avisar, onSucio, onSesion, crear, activo }: PanelProps &
     setFotoError(null);
   }
 
+  function aplicarCambio(id: string, cambio: Partial<Pick<Joya, "activa" | "destacada">>) {
+    setPiezas((lista) => lista.map((item) => (item.id === id ? { ...item, ...cambio } : item)));
+    setBorrador((actual) => (actual?.id === id ? { ...actual, ...cambio } : actual));
+  }
+
+  function parchearOrigen(id: string, destacada: boolean) {
+    setOrigen((actual) => {
+      if (!actual) return actual;
+      try {
+        const data = JSON.parse(actual) as { id?: string; destacada?: boolean };
+        if (data.id !== id || data.destacada === destacada) return actual;
+        data.destacada = destacada;
+        return JSON.stringify(data);
+      } catch {
+        return actual;
+      }
+    });
+  }
+
   async function cambiarCampo(pieza: Joya, cambio: Partial<Pick<Joya, "activa" | "destacada">>) {
+    const clave = `${pieza.id}:${"destacada" in cambio ? "d" : "a"}`;
+    const mio = (campoTicket.current.get(clave) ?? 0) + 1;
+    campoTicket.current.set(clave, mio);
+    const optimista = "destacada" in cambio;
+    if (optimista) {
+      aplicarCambio(pieza.id, cambio);
+      parchearOrigen(pieza.id, cambio.destacada === true);
+    }
     const { data, error } = await supabase.from("joyas").update(cambio).eq("id", pieza.id).select("id");
+    if (campoTicket.current.get(clave) !== mio) return;
     if (error || !data?.length) {
+      if (optimista) {
+        aplicarCambio(pieza.id, { destacada: pieza.destacada });
+        parchearOrigen(pieza.id, pieza.destacada);
+      }
       if (esSesionVencida(error)) onSesion();
       else avisar("No se pudo actualizar.", true, textoError(error));
       return;
     }
-    setPiezas((lista) => lista.map((item) => (item.id === pieza.id ? { ...item, ...cambio } : item)));
+    if (!optimista) aplicarCambio(pieza.id, cambio);
     if ("activa" in cambio) avisar(cambio.activa ? "Joya activa." : "Joya oculta.");
-    if ("destacada" in cambio) avisar(cambio.destacada ? "Joya destacada." : "Ya no está destacada.");
-  }
-
-  async function duplicar(pieza: Joya) {
-    const orden = piezas.reduce((max, item) => Math.max(max, item.orden), -1) + 1;
-    const { data, error } = await supabase
-      .from("joyas")
-      .insert({
-        categoria_id: pieza.categoria_id,
-        nombre: pieza.nombre,
-        frase: pieza.frase,
-        descripcion: pieza.descripcion,
-        alt: pieza.nombre,
-        material: pieza.material,
-        referencia: pieza.referencia,
-        precio: pieza.precio,
-        precio_promo: pieza.precio_promo,
-        promo_etiqueta: pieza.promo_etiqueta,
-        promo_inicio: pieza.promo_inicio,
-        promo_fin: pieza.promo_fin,
-        stock: pieza.stock,
-        imagen_url: null,
-        imagen_local: null,
-        destacada: pieza.destacada,
-        activa: pieza.activa,
-        orden,
-      })
-      .select(COLUMNAS)
-      .single();
-    if (error || !data) {
-      if (esSesionVencida(error)) onSesion();
-      else avisar("No se pudo duplicar.", true, textoError(error));
-      return;
-    }
-    setPiezas((lista) => [...lista, normalizar(data, [])].sort((a, b) => a.orden - b.orden));
-    avisar("Joya duplicada, sin fotos.");
+    if ("destacada" in cambio) avisar(cambio.destacada ? "Marcada como recomendada" : "Ya no es recomendada");
   }
 
   async function eliminar(pieza: Joya) {
@@ -286,17 +283,6 @@ export function Joyas({ avisar, onSucio, onSesion, crear, activo }: PanelProps &
     const hacia = ids.indexOf(sobre);
     setArrastre(null);
     if (desde < 0 || hacia < 0) return;
-    const reorden = moverElemento(ids, desde, hacia);
-    const cola = [...reorden];
-    const siguiente = piezas.map((item) => (ids.includes(item.id) ? piezas.find((pieza) => pieza.id === cola.shift()) ?? item : item));
-    void guardarOrden(siguiente);
-  }
-
-  function mover(id: string, direccion: -1 | 1) {
-    const ids = visibles.map((item) => item.id);
-    const desde = ids.indexOf(id);
-    const hacia = desde + direccion;
-    if (desde < 0 || hacia < 0 || hacia >= ids.length) return;
     const reorden = moverElemento(ids, desde, hacia);
     const cola = [...reorden];
     const siguiente = piezas.map((item) => (ids.includes(item.id) ? piezas.find((pieza) => pieza.id === cola.shift()) ?? item : item));
@@ -447,7 +433,7 @@ export function Joyas({ avisar, onSucio, onSesion, crear, activo }: PanelProps &
             <option value="activa">Activas</option>
             <option value="oculta">Ocultas</option>
             <option value="promo">En promo</option>
-            <option value="destacada">Destacadas</option>
+            <option value="destacada">Recomendadas</option>
             <option value="sinfoto">Sin foto</option>
           </select>
         </div>
@@ -461,7 +447,7 @@ export function Joyas({ avisar, onSucio, onSesion, crear, activo }: PanelProps &
         <p className="mt-6 text-sm text-muted">Ninguna joya coincide.</p>
       ) : (
         <ul className="mt-2 border-t border-gold-line">
-          {visibles.map((pieza, indice) => {
+          {visibles.map((pieza) => {
             const categoria = categorias.find((cat) => cat.id === pieza.categoria_id)?.nombre ?? "Sin categoría";
             const promo = estadoPromo(pieza) === "vigente" && pieza.precio_promo != null && pieza.precio != null;
             return (
@@ -491,41 +477,30 @@ export function Joyas({ avisar, onSucio, onSesion, crear, activo }: PanelProps &
                         <span>{pieza.precio == null ? copy.catalogo.precio : formatoPesos(pieza.precio)}</span>
                       )}
                       <span> · {pieza.activa ? "Activa" : "Oculta"}</span>
-                      {pieza.destacada ? <span> · Destacada</span> : null}
+                      {pieza.destacada ? <span> · Recomendada</span> : null}
                     </p>
                   </div>
                 </div>
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <Interruptor
-                    activo={pieza.activa}
-                    etiqueta={pieza.activa ? `Ocultar ${pieza.nombre}` : `Activar ${pieza.nombre}`}
-                    onChange={(activa) => void cambiarCampo(pieza, { activa })}
-                  />
-                  <button
-                    type="button"
-                    aria-pressed={pieza.destacada}
-                    aria-label={pieza.destacada ? `Quitar destacada de ${pieza.nombre}` : `Destacar ${pieza.nombre}`}
-                    onClick={() => void cambiarCampo(pieza, { destacada: !pieza.destacada })}
-                    className={`inline-flex min-h-11 min-w-11 items-center justify-center ${pieza.destacada ? "text-gold" : "text-ink"}`}
-                  >
-                    <Star aria-hidden="true" size={18} strokeWidth={1.25} fill={pieza.destacada ? "currentColor" : "none"} />
-                  </button>
+                <div className="mt-2 flex max-w-full flex-wrap items-center gap-x-3 gap-y-1">
+                  <span className="inline-flex items-center gap-2">
+                    <span className="text-xs tracking-[0.12em] text-ink uppercase">Visible</span>
+                    <Interruptor
+                      activo={pieza.activa}
+                      etiqueta={`Visible, ${pieza.nombre}`}
+                      onChange={(activa) => void cambiarCampo(pieza, { activa })}
+                    />
+                  </span>
+                  <span className="inline-flex items-center gap-2">
+                    <span className="text-xs tracking-[0.12em] text-ink uppercase">Recomendado</span>
+                    <Interruptor
+                      activo={pieza.destacada}
+                      etiqueta={`Recomendado, ${pieza.nombre}`}
+                      dorado
+                      onChange={(destacada) => void cambiarCampo(pieza, { destacada })}
+                    />
+                  </span>
                   <Boton className="w-auto" onClick={() => editar(pieza)}>
                     Editar
-                  </Boton>
-                  <Boton className="w-auto" secundario disabled={ordenando || indice === 0} onClick={() => mover(pieza.id, -1)}>
-                    Subir
-                  </Boton>
-                  <Boton
-                    className="w-auto"
-                    secundario
-                    disabled={ordenando || indice === visibles.length - 1}
-                    onClick={() => mover(pieza.id, 1)}
-                  >
-                    Bajar
-                  </Boton>
-                  <Boton className="w-auto" secundario onClick={() => void duplicar(pieza)}>
-                    Duplicar
                   </Boton>
                   <Boton className="w-auto" secundario onClick={() => void eliminar(pieza)}>
                     Eliminar
@@ -548,6 +523,11 @@ export function Joyas({ avisar, onSucio, onSesion, crear, activo }: PanelProps &
           onFotoError={setFotoError}
           onCerrar={cerrar}
           onGuardar={(event) => void guardar(event)}
+          onDestacada={(destacada) => {
+            if (!borrador?.id) return;
+            const pieza = piezas.find((item) => item.id === borrador.id);
+            if (pieza) void cambiarCampo(pieza, { destacada });
+          }}
         />
       ) : null}
     </div>
@@ -565,6 +545,7 @@ function Formulario({
   onFotoError,
   onCerrar,
   onGuardar,
+  onDestacada,
 }: {
   borrador: Borrador;
   categorias: Categoria[];
@@ -576,6 +557,7 @@ function Formulario({
   onFotoError: (texto: string | null) => void;
   onCerrar: () => void;
   onGuardar: (event: FormEvent<HTMLFormElement>) => void;
+  onDestacada: (valor: boolean) => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   useFocusTrap(true, ref, onCerrar);
@@ -830,12 +812,20 @@ function Formulario({
           <fieldset className="mt-8 min-w-0 border-0 p-0" disabled={guardando}>
             <legend className="text-xs tracking-[0.16em] text-gold uppercase">Visibilidad</legend>
             <div className="mt-3 flex items-center justify-between gap-3 border-b border-gold-line py-2">
-              <span className="text-sm text-ink">Activa</span>
-              <Interruptor activo={borrador.activa} etiqueta="Joya activa" onChange={(activa) => poner({ activa })} />
+              <span className="text-sm text-ink">Visible</span>
+              <Interruptor activo={borrador.activa} etiqueta="Visible" onChange={(activa) => poner({ activa })} />
             </div>
             <div className="flex items-center justify-between gap-3 border-b border-gold-line py-2">
-              <span className="text-sm text-ink">Destacada</span>
-              <Interruptor activo={borrador.destacada} etiqueta="Joya destacada" onChange={(destacada) => poner({ destacada })} />
+              <span className="text-sm text-ink">Recomendado</span>
+              <Interruptor
+                activo={borrador.destacada}
+                etiqueta="Recomendado"
+                dorado
+                onChange={(destacada) => {
+                  poner({ destacada });
+                  if (borrador.id) onDestacada(destacada);
+                }}
+              />
             </div>
             <CampoTexto
               id="joya-stock"

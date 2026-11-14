@@ -16,11 +16,9 @@ const vacio: Conteo = { activas: 0, ocultas: 0, promo: 0, destacadas: 0, sinFoto
 
 export function Resumen({
   onNueva,
-  onVerSitio,
   onSesion,
 }: {
   onNueva: () => void;
-  onVerSitio: () => void;
   onSesion: () => void;
 }) {
   const [conteo, setConteo] = useState<Conteo>(vacio);
@@ -108,11 +106,8 @@ export function Resumen({
           </li>
         ))}
       </ul>
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="mt-6">
         <Boton onClick={onNueva}>Nueva joya</Boton>
-        <Boton secundario onClick={onVerSitio}>
-          Ver sitio
-        </Boton>
       </div>
     </div>
   );
