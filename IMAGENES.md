@@ -36,3 +36,7 @@ La versión `-640` de cada una usa el mismo recorte, a 640 px de ancho.
 ## Catálogo
 
 `src/data/productos.ts` usa `prod-01` a `prod-08`. El precio no se publica: se conversa por WhatsApp. No hay quilates ni certificaciones.
+
+## Argollas de matrimonio (catálogo SALEM)
+
+`public/img/argollas/SAMxxx.webp`: 69 fotos del catálogo en PDF, una por referencia (1000×1250, WebP calidad 82). Se ampliaron desde 700×583, con nitidez y fondo marfil parejo. Cada joya en Supabase apunta a su foto con `imagen_url`.
