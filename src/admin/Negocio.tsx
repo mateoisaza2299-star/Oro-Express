@@ -12,7 +12,7 @@ const grupos = [
       {
         clave: "nombre",
         etiqueta: "Nombre",
-        placeholder: "Maison",
+        placeholder: "Salem",
         ayuda: "Así aparece en el encabezado y en el pie.",
         tipo: "texto",
       },
@@ -26,21 +26,21 @@ const grupos = [
       {
         clave: "instagram",
         etiqueta: "Instagram",
-        placeholder: "@maison",
+        placeholder: "@salem",
         ayuda: "Acepta @usuario o un enlace.",
         tipo: "red",
       },
       {
         clave: "tiktok",
         etiqueta: "TikTok",
-        placeholder: "@maison",
+        placeholder: "@salem",
         ayuda: "Acepta @usuario o un enlace.",
         tipo: "red",
       },
       {
         clave: "facebook",
         etiqueta: "Facebook",
-        placeholder: "https://facebook.com/maison",
+        placeholder: "https://facebook.com/salem",
         ayuda: "Acepta @usuario o un enlace.",
         tipo: "red",
       },
@@ -113,7 +113,7 @@ const grupos = [
       {
         clave: "responsable",
         etiqueta: "Responsable",
-        placeholder: "Maison S.A.S.",
+        placeholder: "Salem S.A.S.",
         ayuda: "Vacío: la línea no aparece en privacidad.",
         tipo: "texto",
       },
@@ -127,7 +127,7 @@ const grupos = [
       {
         clave: "correo_datos",
         etiqueta: "Correo de datos",
-        placeholder: "hola@maison.com",
+        placeholder: "hola@salem.com",
         ayuda: "Correo para ejercer los derechos de datos.",
         tipo: "correo",
       },

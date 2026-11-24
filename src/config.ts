@@ -1,7 +1,7 @@
 /**
  * Datos del negocio. Un campo vacío o en "PENDIENTE" no es un dato real
  * y no se muestra en la página.
- * `nombre` es el wordmark. "Maison" es provisional hasta confirmar el nombre real.
+ * `nombre` es el wordmark. "Salem" es provisional hasta confirmar el nombre real.
  *
  * REVISAR CON ABOGADO.
  * Los textos de privacidad, términos y ayuda son una guía general.
@@ -20,7 +20,7 @@ export const site: {
   pais: string;
   ciudad: string;
 } = {
-  nombre: "Maison",
+  nombre: "Salem",
   whatsapp: "PENDIENTE",
   instagram: "PENDIENTE",
   tiktok: "",

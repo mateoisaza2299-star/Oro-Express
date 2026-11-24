@@ -12,7 +12,7 @@ export const navegacion = [
 
 export const copy = {
   meta: {
-    title: "Maison — Una pieza. Sin prisa.",
+    title: "Salem — Una pieza. Sin prisa.",
     description:
       "Anillos, collares, aretes y pulseras para elegir con calma. Material, medida y precio se conversan por WhatsApp.",
     ogDescription: "Elige una pieza con calma. Material, medida y precio, por WhatsApp.",

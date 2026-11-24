@@ -222,7 +222,7 @@ function Editor({ onSalir, onSesion }: { onSalir: (sucio: boolean) => void; onSe
     <div className="lg:grid lg:min-h-svh lg:grid-cols-[15rem_minmax(0,1fr)]">
       {aviso ? <Toast texto={aviso.texto} detalle={aviso.detalle} error={aviso.error} /> : null}
       <nav aria-label="Secciones" className="border-b border-gold-line px-4 py-4 lg:border-r lg:border-b-0 lg:px-5 lg:py-8">
-        <p className="font-serif text-3xl text-ink">Maison</p>
+        <p className="font-serif text-3xl text-ink">Salem</p>
         <div className="mt-4 grid grid-cols-2 gap-2 lg:grid-cols-1">
           {secciones.map((item) => {
             const activo = seccion === item.id;

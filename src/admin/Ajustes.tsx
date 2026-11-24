@@ -115,7 +115,7 @@ export function Ajustes({ avisar, onSucio, onSesion }: PanelProps) {
         id="ajuste-instagram"
         etiqueta="Instagram"
         value={valores.instagram}
-        placeholder="@maison"
+        placeholder="@salem"
         ayuda="Acepta @usuario o un enlace."
         error={errorInstagram}
         onChange={(valor) => setValores((actual) => ({ ...actual, instagram: valor }))}

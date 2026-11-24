@@ -2,7 +2,7 @@
 
 Landing de una sola página. Vite, React, TypeScript y Tailwind CSS.
 
-El nombre visible es provisional (`Maison` en `src/config.ts`) hasta confirmarlo. Los textos viven en `src/content/es.ts`. WhatsApp, Instagram, dirección y horario no se muestran mientras sigan sin confirmar.
+El nombre visible es provisional (`Salem` en `src/config.ts`) hasta confirmarlo. Los textos viven en `src/content/es.ts`. WhatsApp, Instagram, dirección y horario no se muestran mientras sigan sin confirmar.
 
 ## Scripts
 
