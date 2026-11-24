@@ -35,7 +35,6 @@ const ficha: { id: keyof typeof copy.productos; categoria: Categoria; imagen: Im
   { id: "prod-01", categoria: "Compromiso", imagen: "prod-01" },
   { id: "prod-02", categoria: "Anillos", imagen: "prod-02" },
   { id: "prod-03", categoria: "Regalos", imagen: "prod-03" },
-  { id: "prod-04", categoria: "Collares", imagen: "prod-04" },
   { id: "prod-05", categoria: "Aretes", imagen: "prod-05" },
   { id: "prod-06", categoria: "Aretes", imagen: "prod-06" },
   { id: "prod-07", categoria: "Pulseras", imagen: "prod-07" },

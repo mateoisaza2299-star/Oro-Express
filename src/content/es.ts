@@ -105,11 +105,6 @@ export const copy = {
       frase: "Un corazón pequeño, cerca de la piel.",
       alt: "Collar de cadena dorada con dije de perla y piedras, en un estuche de terciopelo azul rey.",
     },
-    "prod-04": {
-      nombre: "Collar de piedra en bisel",
-      frase: "Un punto de luz, sin alzar la voz.",
-      alt: "Collar con una piedra clara pequeña en bisel, sobre una piedra pulida y terciopelo azul rey.",
-    },
     "prod-05": {
       nombre: "Aretes de piedra en bisel",
       frase: "Dos destellos, junto al rostro.",
