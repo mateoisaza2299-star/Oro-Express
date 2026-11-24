@@ -17,7 +17,7 @@ export const copy = {
       "Anillos, collares, aretes y pulseras para elegir con calma. Material, medida y precio se conversan por WhatsApp.",
     ogDescription: "Elige una pieza con calma. Material, medida y precio, por WhatsApp.",
     twitterDescription: "Una pieza, sin prisa. Material y medida se conversan por WhatsApp.",
-    imagenAlt: "Collar de perlas y anillo con piedra clara sobre terciopelo verde.",
+    imagenAlt: "Pulsera de perlas y anillo con piedra clara sobre terciopelo azul rey.",
   },
   ui: {
     saltar: "Saltar al contenido",
@@ -42,7 +42,7 @@ export const copy = {
     texto: "Anillos, collares, aretes y pulseras. Material, medida y precio, en una conversación.",
     colecciones: "Descubrir colecciones",
     whatsapp: "Reservar mi pieza por WhatsApp",
-    alt: "Collar de perlas y anillo con piedra clara sobre terciopelo verde, con cortinas claras al fondo.",
+    alt: "Pulsera de perlas y anillo con piedra clara sobre terciopelo azul rey, con cortinas claras al fondo.",
   },
   colecciones: {
     numero: "01",
@@ -52,27 +52,27 @@ export const copy = {
     items: {
       Anillos: {
         linea: "El círculo que decides llevar.",
-        alt: "Anillo con piedra clara en cuatro garras, sobre mármol.",
+        alt: "Anillo con piedra clara en garras, dentro de un estuche de terciopelo azul rey.",
       },
       Collares: {
         linea: "Una luz quieta en el cuello.",
-        alt: "Collar con dije de corazón, sobre tela clara.",
+        alt: "Conjunto de collar, pulsera, aretes y anillo de perlas sobre terciopelo azul rey.",
       },
       Aretes: {
         linea: "El brillo que se mueve contigo.",
-        alt: "Aretes largos con perlas, sobre seda beige.",
+        alt: "Aretes largos con perlas, sobre un expositor de terciopelo azul rey.",
       },
       Pulseras: {
         linea: "Cerca del pulso, todo el día.",
-        alt: "Pulsera de piedras en línea, en la muñeca.",
+        alt: "Pulsera de perlas con broche de piedras, sobre terciopelo azul rey.",
       },
       Compromiso: {
         linea: "Una pregunta, dicha en silencio.",
-        alt: "Anillo con piedra clara dentro de un estuche de terciopelo verde.",
+        alt: "Anillos de compromiso con piedras de distintos cortes, sobre terciopelo azul rey.",
       },
       Regalos: {
         linea: "Para dar, sin decir de más.",
-        alt: "Dije en un estuche de terciopelo verde, con un lazo.",
+        alt: "Dije con perla y piedras claras en un estuche de terciopelo azul rey.",
       },
     },
   },
@@ -93,17 +93,17 @@ export const copy = {
     "prod-01": {
       nombre: "Anillo en cuatro garras",
       frase: "La piedra queda alta y quieta.",
-      alt: "Anillo con una piedra clara sujeta en cuatro garras, sobre mármol.",
+      alt: "Anillo con una piedra clara sujeta en garras, dentro de un estuche de terciopelo azul rey.",
     },
     "prod-02": {
       nombre: "Argolla de perfil liso",
       frase: "Un aro liso, tibio en el dedo.",
-      alt: "Argolla lisa de perfil abombado, sobre tela clara.",
+      alt: "Argolla con piedras pequeñas engastadas, dentro de un estuche de terciopelo azul rey.",
     },
     "prod-03": {
       nombre: "Collar de corazón",
       frase: "Un corazón pequeño, cerca de la piel.",
-      alt: "Collar con un dije de corazón, sobre tela clara.",
+      alt: "Collar de cadena dorada con dije de perla y piedras, en un estuche de terciopelo azul rey.",
     },
     "prod-04": {
       nombre: "Collar de piedra en bisel",
@@ -113,12 +113,12 @@ export const copy = {
     "prod-05": {
       nombre: "Aretes de piedra en bisel",
       frase: "Dos destellos, junto al rostro.",
-      alt: "Par de aretes con piedra clara redonda, sobre tela clara.",
+      alt: "Par de aretes de aro con piedras claras, sobre terciopelo azul rey.",
     },
     "prod-06": {
       nombre: "Aretes de perla",
       frase: "La perla baja cuando caminas.",
-      alt: "Aretes largos con perlas, sobre seda beige.",
+      alt: "Aretes largos con perlas, sobre un expositor de terciopelo azul rey.",
     },
     "prod-07": {
       nombre: "Pulsera de eslabones",
@@ -136,7 +136,7 @@ export const copy = {
     lines: ["DE CERCA.", "SIN RUIDO."],
     texto: "El perfil, el cierre, cómo cae la cadena.",
     cuerpo: "Material, medida y precio se hablan. Aquí no hay cifras de taller.",
-    alt: "Collar con piedra clara en bisel, apoyado sobre terciopelo verde.",
+    alt: "Pulsera de perlas y anillo con piedra clara, apoyados sobre terciopelo azul rey.",
   },
   cuidado: {
     numero: "04",
