@@ -23,7 +23,7 @@ export function Hero() {
           className="hero-zoom absolute inset-0 h-full w-full object-cover object-[72%_48%] lg:object-[58%_center]"
         />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ivory via-ivory/70 to-transparent lg:hidden" />
-        <div className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(90deg,#f3eee6_0%,rgba(243,238,230,0.94)_16%,rgba(243,238,230,0.72)_34%,rgba(243,238,230,0.28)_52%,transparent_68%)] lg:block" />
+        <div className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(90deg,#fbf9f4_0%,rgba(251,249,244,0.94)_16%,rgba(251,249,244,0.72)_34%,rgba(251,249,244,0.28)_52%,transparent_68%)] lg:block" />
       </div>
       <div className="relative z-10 flex flex-col px-5 pt-3 pb-4 lg:h-full lg:w-[min(58%,36rem)] lg:justify-center lg:px-10 lg:py-0 xl:px-14">
         <p className="font-serif text-xl text-gold italic lg:text-2xl">{hero.kicker}</p>
@@ -39,7 +39,7 @@ export function Hero() {
         <div className="mt-4 flex flex-col gap-3 lg:mt-8 lg:flex-row lg:flex-wrap">
           <a
             href="#colecciones"
-            className="btn-shimmer inline-flex min-h-12 w-full items-center justify-center bg-ink px-5 text-xs tracking-[0.18em] text-ivory uppercase lg:w-auto"
+            className="btn-shimmer inline-flex min-h-12 w-full items-center justify-center bg-royal px-5 text-xs tracking-[0.18em] text-ivory uppercase lg:w-auto"
             onClick={(event) => {
               event.preventDefault();
               scrollToId("colecciones");
