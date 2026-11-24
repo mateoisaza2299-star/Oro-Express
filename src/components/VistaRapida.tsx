@@ -131,7 +131,7 @@ export default function VistaRapida({ producto, onClose }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             data-testid="whatsapp-consulta"
-            className="btn-shimmer mt-8 inline-flex min-h-12 items-center bg-ink px-5 text-xs tracking-[0.16em] text-ivory uppercase"
+            className="btn-shimmer mt-8 inline-flex min-h-12 items-center bg-royal px-5 text-xs tracking-[0.16em] text-ivory uppercase"
           >
             <span className="relative z-10">{copy.vista.asesoria}</span>
             <span className="shimmer" aria-hidden="true" />

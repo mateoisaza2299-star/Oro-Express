@@ -24,7 +24,7 @@ export function Cuidado() {
               <li key={item.titulo}>
                 <GlowCard
                   className={`h-full border-t px-1 pt-6 ${
-                    oscuro ? "bg-emerald px-6 py-8 text-ivory" : "border-gold-line text-ink"
+                    oscuro ? "bg-royal px-6 py-8 text-ivory" : "border-gold-line text-ink"
                   }`}
                 >
                   <Icono

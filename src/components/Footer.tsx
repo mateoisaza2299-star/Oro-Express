@@ -64,7 +64,7 @@ export function Footer({ onCategoria }: Props) {
   }
 
   return (
-    <footer className="bg-emerald px-5 pt-12 pb-28 text-ivory lg:px-10 lg:pb-16" data-testid="footer">
+    <footer className="bg-royal px-5 pt-12 pb-28 text-ivory lg:px-10 lg:pb-16" data-testid="footer">
       <div className="mx-auto max-w-[1440px]">
         <div className="lg:grid lg:grid-cols-4 lg:divide-x lg:divide-gold-line/40">
           <Columna titulo={copy.footer.explorar} enlaces={explorar} onIr={ir} />

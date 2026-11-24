@@ -81,7 +81,7 @@ export function Contacto() {
           ) : null}
           <button
             type="submit"
-            className="mt-8 inline-flex min-h-12 items-center bg-ink px-5 text-xs tracking-[0.16em] text-ivory uppercase"
+            className="mt-8 inline-flex min-h-12 items-center bg-royal px-5 text-xs tracking-[0.16em] text-ivory uppercase"
           >
             {copy.contacto.enviar}
           </button>

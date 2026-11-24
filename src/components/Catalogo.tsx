@@ -40,7 +40,7 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                 aria-pressed={activo}
                 data-testid={`filtro-${id}`}
                 className={`min-h-11 border px-4 text-xs tracking-[0.16em] uppercase ${
-                  activo ? "border-ink bg-ink text-ivory" : "border-gold-line bg-transparent text-ink"
+                  activo ? "border-royal bg-royal text-ivory" : "border-gold-line bg-transparent text-ink"
                 }`}
                 onClick={() => onFiltro(item)}
               >
