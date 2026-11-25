@@ -1,5 +1,4 @@
 import type { ImagenNombre } from "../data/medidas.ts";
-import { alCargarFoto, alMontarFoto } from "../lib/foto.ts";
 import { fuentes } from "../lib/imagen.ts";
 
 type Props = {
@@ -22,9 +21,7 @@ export function Picture({ nombre, src, alt, sizes, priority = false, className }
       loading={priority ? "eager" : "lazy"}
       fetchPriority={priority ? "high" : undefined}
       decoding="async"
-      ref={priority ? undefined : alMontarFoto}
-      onLoad={priority ? undefined : alCargarFoto}
-      className={priority ? className : `fade-img ${className ?? ""}`}
+      className={className}
     />
   );
 }
