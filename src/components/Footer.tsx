@@ -76,7 +76,7 @@ export function Footer({ onCategoria }: Props) {
 
         <div className="mt-10 flex flex-col gap-6 border-t border-gold-line/40 pt-8 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <Logo variante="claro" nombre={nombre ?? "Salem"} className="h-24 w-auto" />
+            <Logo variante="completo" tono="blanco" nombre={nombre ?? "Salem"} className="h-28 w-auto" />
             {lugar ? <p className="mt-2 text-sm text-champagne">{lugar}</p> : null}
           </div>
           {redes.length > 0 ? (
