@@ -5,7 +5,6 @@
 
 export const navegacion = [
   { id: "colecciones", etiqueta: "Colecciones" },
-  { id: "atelier", etiqueta: "Atelier" },
   { id: "cuidado", etiqueta: "Cuidado" },
   { id: "contacto", etiqueta: "Contacto" },
 ] as const;
@@ -134,7 +133,7 @@ export const copy = {
     alt: "Pulsera de perlas y anillo con piedra clara, apoyados sobre terciopelo azul rey.",
   },
   cuidado: {
-    numero: "04",
+    numero: "03",
     lines: ["SE USA.", "SE CUIDA."],
     texto: "Indicaciones generales. Lo de cada pieza se acuerda al reservarla.",
     items: [
@@ -153,7 +152,7 @@ export const copy = {
     ],
   },
   contacto: {
-    numero: "05",
+    numero: "04",
     lines: ["ESCRIBE.", "AQUÍ ESTAMOS."],
     texto: "El mensaje se abre en WhatsApp. No pasa por un servidor de esta página.",
     sinNumero: "Se abre WhatsApp con el texto listo, para que elijas con quién hablar.",
