@@ -40,3 +40,7 @@ La versión `-640` de cada una usa el mismo recorte, a 640 px de ancho.
 ## Argollas de matrimonio (catálogo SALEM)
 
 `public/img/argollas/SAMxxx.webp`: 69 fotos del catálogo en PDF, una por referencia (1000×1250, WebP calidad 82). Se ampliaron desde 700×583, con nitidez y fondo marfil parejo. Cada joya en Supabase apunta a su foto con `imagen_url`.
+
+## Joyas nuevas (j01 a j11)
+
+`public/img/joyas/jNN.webp`: 11 fotos de anillos, sellos y pulseras (1000×1250, WebP calidad 82). Cada joya en Supabase apunta a su foto con `imagen_url`.
