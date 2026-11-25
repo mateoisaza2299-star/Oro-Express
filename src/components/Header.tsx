@@ -45,7 +45,7 @@ export function Header({ menuAbierto, onMenu, inert = false }: Props) {
             ir("inicio");
           }}
         >
-          <Logo nombre={nombre ?? "Salem"} className="h-11 w-auto lg:h-12" />
+          <Logo nombre={nombre ?? "Salem"} className="h-12 w-auto lg:h-[3.25rem]" />
         </a>
         <nav className="hidden items-center gap-8 lg:flex" aria-label={copy.ui.secciones}>
           {navegacion.map((enlace) => (
