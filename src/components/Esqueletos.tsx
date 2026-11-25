@@ -19,23 +19,6 @@ export function CatalogoEsqueleto() {
   );
 }
 
-export function ColeccionesEsqueleto() {
-  return (
-    <div aria-busy="true" role="status" className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:auto-rows-[320px]">
-      <span className="sr-only">Cargando colecciones…</span>
-      {[0, 1, 2].map((i) => (
-        <span
-          key={i}
-          aria-hidden="true"
-          className={`skeleton block aspect-[4/5] border border-gold-line/60 lg:aspect-auto lg:h-full ${
-            i === 0 ? "lg:col-span-7" : i === 1 ? "lg:col-span-5" : "lg:col-span-12"
-          }`}
-        />
-      ))}
-    </div>
-  );
-}
-
 /** Mientras se descarga el código de la vista rápida: respuesta inmediata al toque. */
 export function VistaEsqueleto() {
   return (
