@@ -3,8 +3,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { copy } from "../content/es.ts";
 import { rejilla } from "../data/colecciones.ts";
 import type { Categoria } from "../data/productos.ts";
-import { useCargandoContenido, useContenido } from "../lib/contenido.ts";
-import { ColeccionesEsqueleto } from "./Esqueletos.tsx";
+import { useContenido } from "../lib/contenido.ts";
 import { Encabezado } from "./Encabezado.tsx";
 import { Picture } from "./Picture.tsx";
 
@@ -17,7 +16,6 @@ const ease = [0.22, 1, 0.36, 1] as const;
 export function Colecciones({ onElegir }: Props) {
   const reduce = useReducedMotion();
   const { colecciones } = useContenido();
-  const cargando = useCargandoContenido();
 
   return (
     <section
@@ -33,9 +31,6 @@ export function Colecciones({ onElegir }: Props) {
           tituloId="titulo-colecciones"
           texto={copy.colecciones.texto}
         />
-        {cargando ? (
-          <ColeccionesEsqueleto />
-        ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:auto-rows-[320px]">
           {colecciones.map((coleccion, index) => (
             <motion.button
@@ -48,7 +43,7 @@ export function Colecciones({ onElegir }: Props) {
               className={`col-card group relative aspect-[4/5] w-full text-left lg:aspect-auto lg:h-full ${rejilla[index] ?? "lg:col-span-6"}`}
               onClick={() => onElegir(coleccion.nombre)}
             >
-              <span className="col-press skeleton absolute inset-0 overflow-hidden border border-gold-line/80">
+              <span className="col-press absolute inset-0 overflow-hidden border border-gold-line/80">
                 <Picture
                   nombre={coleccion.imagen}
                   src={coleccion.imagenUrl}
@@ -73,7 +68,6 @@ export function Colecciones({ onElegir }: Props) {
             </motion.button>
           ))}
         </div>
-        )}
       </div>
     </section>
   );
