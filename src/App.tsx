@@ -2,7 +2,6 @@ import { AnimatePresence } from "motion/react";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { recargarContenido, useCargarContenido, useContenido } from "./lib/contenido.ts";
 import { datoVisible } from "./lib/dato.ts";
-import { Atelier } from "./components/Atelier.tsx";
 import { Beneficios } from "./components/Beneficios.tsx";
 import { Catalogo } from "./components/Catalogo.tsx";
 import { Colecciones } from "./components/Colecciones.tsx";
@@ -98,7 +97,6 @@ export default function App() {
               }}
             />
             <Catalogo filtro={filtro} onFiltro={setFiltro} onAbrir={setPieza} />
-            <Atelier />
             <Cuidado />
             <Contacto />
             <Beneficios />
