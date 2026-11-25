@@ -14,18 +14,17 @@ export function Hero() {
       data-testid="hero"
       aria-labelledby="titulo-principal"
     >
-      <div className="relative h-[54svh] overflow-hidden lg:absolute lg:inset-0 lg:h-full">
+      <div className="relative aspect-[3/2] overflow-hidden lg:absolute lg:top-1/2 lg:right-0 lg:aspect-[3/2] lg:w-[54%] lg:-translate-y-1/2 xl:w-[60%]">
         <Picture
           nombre="hero"
           alt={copy.hero.alt}
           sizes="100vw"
           priority
-          className="hero-zoom absolute inset-0 h-full w-full object-cover object-[72%_48%] lg:object-[58%_center]"
+          className="hero-zoom absolute inset-0 h-full w-full object-cover"
         />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-ivory via-ivory/70 to-transparent lg:hidden" />
-        <div className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(90deg,#fbf9f4_0%,rgba(251,249,244,0.94)_16%,rgba(251,249,244,0.72)_34%,rgba(251,249,244,0.28)_52%,transparent_68%)] lg:block" />
+        <div className="pointer-events-none absolute inset-0 hidden bg-[linear-gradient(90deg,#fbf9f4_0%,rgba(251,249,244,0.7)_7%,rgba(251,249,244,0.25)_15%,transparent_24%)] lg:block" />
       </div>
-      <div className="relative z-10 flex flex-col px-5 pt-3 pb-4 lg:h-full lg:w-[min(58%,36rem)] lg:justify-center lg:px-10 lg:py-0 xl:px-14">
+      <div className="relative z-10 flex flex-col px-5 pt-3 pb-4 lg:h-full lg:w-[min(46%,36rem)] xl:w-[min(40%,36rem)] lg:justify-center lg:px-10 lg:py-0 xl:px-14">
         <p className="font-serif text-xl text-gold italic lg:text-2xl">{hero.kicker}</p>
         <Reveal
           as="h1"

@@ -1,6 +1,7 @@
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { copy, navegacion } from "../content/es.ts";
+import { Logo } from "./Logo.tsx";
 import { useContenido } from "../lib/contenido.ts";
 import { datoVisible } from "../lib/dato.ts";
 import { irA } from "../lib/navegar.ts";
@@ -38,13 +39,13 @@ export function Header({ menuAbierto, onMenu, inert = false }: Props) {
       <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-5 lg:h-[4.5rem] lg:px-10">
         <a
           href="#inicio"
-          className="inline-flex min-h-12 items-center font-serif text-[1.55rem] leading-none font-medium tracking-[0.16em] text-ink"
+          className="inline-flex min-h-12 items-center"
           onClick={(event) => {
             event.preventDefault();
             ir("inicio");
           }}
         >
-          {nombre}
+          <Logo nombre={nombre ?? "Salem"} className="h-11 w-auto lg:h-12" />
         </a>
         <nav className="hidden items-center gap-8 lg:flex" aria-label={copy.ui.secciones}>
           {navegacion.map((enlace) => (

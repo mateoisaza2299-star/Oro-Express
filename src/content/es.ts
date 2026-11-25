@@ -42,7 +42,7 @@ export const copy = {
     texto: "Anillos, collares, aretes y pulseras. Material, medida y precio, en una conversación.",
     colecciones: "Descubrir colecciones",
     whatsapp: "Reservar mi pieza por WhatsApp",
-    alt: "Pulsera de perlas y anillo con piedra clara sobre terciopelo azul rey, con cortinas claras al fondo.",
+    alt: "Selección de anillos, sellos y pulseras en oro con piedras de colores: león, rubí, amatista y esmeralda.",
   },
   colecciones: {
     numero: "01",
