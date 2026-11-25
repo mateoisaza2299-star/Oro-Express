@@ -78,9 +78,9 @@ export default function Panel() {
 
   async function entrar(correo: string, password: string) {
     setAviso("");
-    const { error } = await supabase.auth.signInWithPassword({ email: correo.trim(), password });
+    const { error } = await supabase.auth.signInWithPassword({ email: aCorreo(correo), password });
     if (error) {
-      setAviso("No se pudo entrar. Revisa el correo y la contraseña.");
+      setAviso("No se pudo entrar. Revisa el usuario y la contraseña.");
       return;
     }
     const permitido = await esAdmin();
@@ -114,6 +114,12 @@ export default function Panel() {
   );
 }
 
+/** Acepta "esteban" o un correo completo. Sin @ se completa con el dominio interno del panel. */
+function aCorreo(entrada: string): string {
+  const valor = entrada.trim().toLowerCase();
+  return valor.includes("@") ? valor : `${valor}@salem.com`;
+}
+
 function Login({ aviso, onEntrar }: { aviso: string; onEntrar: (correo: string, password: string) => Promise<void> }) {
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
@@ -132,8 +138,8 @@ function Login({ aviso, onEntrar }: { aviso: string; onEntrar: (correo: string, 
       <h1 className="font-serif text-4xl text-ink">Acceso</h1>
       <Campo
         id="acceso-correo"
-        etiqueta="Correo"
-        type="email"
+        etiqueta="Usuario"
+        type="text"
         autoComplete="username"
         value={correo}
         onChange={setCorreo}
