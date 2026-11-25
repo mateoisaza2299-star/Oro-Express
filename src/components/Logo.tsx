@@ -6,8 +6,8 @@ type Props = {
 
 // Proporciones reales de cada archivo, para reservar el espacio y evitar saltos al cargar.
 const medidas = {
-  corto: { archivo: "logo-salem-corto", ancho: 952, alto: 384 },
-  claro: { archivo: "logo-salem-claro", ancho: 952, alto: 527 },
+  corto: { archivo: "logo-salem-corto", ancho: 1200, alto: 519 },
+  claro: { archivo: "logo-salem-claro", ancho: 1200, alto: 675 },
 } as const;
 
 export function Logo({ variante = "corto", nombre, className }: Props) {
