@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { copy, navegacion } from "../content/es.ts";
+import { Logo } from "./Logo.tsx";
 import { useContenido } from "../lib/contenido.ts";
 import { datoVisible } from "../lib/dato.ts";
 import { irA } from "../lib/navegar.ts";
@@ -37,7 +38,7 @@ export function MenuMovil({ onClose }: Props) {
       className="fixed inset-0 z-50 flex flex-col bg-ivory px-5 pt-5 pb-10"
     >
       <div className="flex items-center justify-between">
-        <p className="font-serif text-[1.55rem] tracking-[0.16em] text-ink">{nombre}</p>
+        <Logo nombre={nombre ?? "Salem"} className="h-12 w-auto" />
         <button
           type="button"
           className="inline-flex h-12 w-12 items-center justify-center"

@@ -2,6 +2,7 @@ import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { copy } from "../content/es.ts";
 import type { Categoria } from "../data/productos.ts";
+import { Logo } from "./Logo.tsx";
 import { useContenido } from "../lib/contenido.ts";
 import { datoVisible, redHref } from "../lib/dato.ts";
 import { irA } from "../lib/navegar.ts";
@@ -75,7 +76,7 @@ export function Footer({ onCategoria }: Props) {
 
         <div className="mt-10 flex flex-col gap-6 border-t border-gold-line/40 pt-8 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="font-serif text-4xl tracking-[0.14em]">{nombre}</p>
+            <Logo variante="claro" nombre={nombre ?? "Salem"} className="h-24 w-auto" />
             {lugar ? <p className="mt-2 text-sm text-champagne">{lugar}</p> : null}
           </div>
           {redes.length > 0 ? (

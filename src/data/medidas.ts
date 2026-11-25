@@ -6,7 +6,7 @@ export type Medida = {
 };
 
 export const medidas = {
-  "hero": { ancho: 1376, alto: 768, ancho640: 640, alto640: 357 },
+  "hero": { ancho: 1376, alto: 919, ancho640: 640, alto640: 428 },
   "col-anillos": { ancho: 928, alto: 1152, ancho640: 640, alto640: 794 },
   "col-collares": { ancho: 928, alto: 1152, ancho640: 640, alto640: 794 },
   "col-aretes": { ancho: 928, alto: 1152, ancho640: 640, alto640: 794 },

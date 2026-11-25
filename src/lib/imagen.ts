@@ -22,7 +22,7 @@ export function fuentes(nombre: ImagenNombre) {
         `${base}img/hero-1920.webp 1920w`,
       ].join(", "),
       width: 1920,
-      height: 1072,
+      height: 1283,
     };
   }
   const medida = medidas[nombre];
