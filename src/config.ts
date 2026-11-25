@@ -21,7 +21,7 @@ export const site: {
   ciudad: string;
 } = {
   nombre: "Salem",
-  whatsapp: "PENDIENTE",
+  whatsapp: "+57 314 3983623",
   instagram: "PENDIENTE",
   tiktok: "",
   facebook: "",
