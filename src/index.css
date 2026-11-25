@@ -89,12 +89,6 @@
   top: 1rem;
 }
 
-.btn-shimmer {
-  position: relative;
-  isolation: isolate;
-  overflow: visible;
-}
-
 .shimmer {
   pointer-events: none;
   position: absolute;
@@ -232,5 +226,301 @@
   100% {
     transform: scaleX(1);
     opacity: 0;
+  }
+}
+
+/* ───────── Efectos de botones ───────── */
+
+.btn-fx {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fx-ripple {
+  position: absolute;
+  z-index: 1;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: currentColor;
+  opacity: 0.28;
+  transform: scale(0);
+  animation: fx-ripple 650ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn-fx {
+    transition:
+      translate 380ms cubic-bezier(0.22, 1, 0.36, 1),
+      scale 160ms ease,
+      box-shadow 380ms ease,
+      color 320ms ease,
+      border-color 320ms ease,
+      background-color 320ms ease;
+    translate: var(--mx, 0px) calc(var(--my, 0px) + var(--ly, 0px));
+  }
+
+  .btn-fx:active {
+    scale: 0.96;
+  }
+
+  /* Barrido dorado: una banda de luz cruza el botón al pasar el cursor. */
+  .btn-primary::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 30%, rgba(236, 217, 164, 0.55) 50%, transparent 70%);
+    transform: translateX(-130%) skewX(-18deg);
+  }
+
+  /* Relleno azul que entra desde la izquierda. */
+  .btn-outline::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--color-royal);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .btn-chip {
+    transition:
+      translate 300ms cubic-bezier(0.22, 1, 0.36, 1),
+      scale 160ms ease,
+      color 280ms ease,
+      border-color 280ms ease;
+  }
+
+  .btn-icono {
+    transition: rotate 450ms cubic-bezier(0.22, 1, 0.36, 1), scale 160ms ease, color 250ms ease;
+  }
+
+  .wa-pop {
+    animation: wa-pop 620ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  .wa-pop::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    border: 1px solid var(--color-gold-line);
+    animation: wa-ring 2.4s ease-out 0.8s infinite;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .btn-fx:hover {
+    --ly: -2px;
+  }
+
+  .btn-primary:hover {
+    box-shadow:
+      0 12px 26px -10px rgba(22, 49, 92, 0.65),
+      0 0 0 1px var(--color-gold-line);
+  }
+
+  .btn-primary:hover::before {
+    animation: btn-barrido 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .btn-outline:hover {
+    color: var(--color-ivory);
+    border-color: var(--color-royal);
+    box-shadow: 0 12px 26px -12px rgba(22, 49, 92, 0.5);
+  }
+
+  .btn-outline:hover::before {
+    transform: scaleX(1);
+  }
+
+  .btn-chip:hover {
+    translate: 0 -2px;
+    border-color: var(--color-royal);
+  }
+
+  .btn-icono:hover {
+    rotate: 90deg;
+  }
+
+  .nav-link {
+    position: relative;
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -6px;
+    left: 0;
+    height: 1px;
+    background: var(--color-gold-line);
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+
+  .glow-card {
+    transition: translate 500ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 500ms ease;
+  }
+
+  .glow-card:hover {
+    translate: 0 -6px;
+    box-shadow: 0 22px 40px -24px rgba(22, 49, 92, 0.45);
+  }
+
+  .card-foto {
+    transition: scale 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .glow-card:hover .card-foto {
+    scale: 1.06;
+  }
+
+  .card-ver {
+    transition: letter-spacing 450ms ease, color 300ms ease;
+  }
+
+  .glow-card:hover .card-ver {
+    letter-spacing: 0.24em;
+    color: var(--color-ink);
+  }
+}
+
+/* ───────── Carga: esqueletos y fotos ───────── */
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-paper);
+}
+
+.skeleton::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(236, 217, 164, 0.5) 50%, transparent 80%);
+  transform: translateX(-100%);
+}
+
+.skeleton:has(.is-loaded)::before {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skeleton::before {
+    animation: skeleton 1.7s ease-in-out infinite;
+  }
+
+  .fade-img {
+    opacity: 0;
+    transition: opacity 700ms ease;
+  }
+
+  .fade-img.is-loaded {
+    opacity: 1;
+  }
+
+  .card-in {
+    animation: card-in 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
+  }
+
+  .modal-in {
+    animation: card-in 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+/* Barra de progreso de lectura (donde el navegador soporta animation-timeline). */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 71;
+      height: 2px;
+      width: 100%;
+      pointer-events: none;
+      transform-origin: left center;
+      background: linear-gradient(90deg, var(--color-gold-line), var(--color-champagne));
+      animation: scroll-progress linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+}
+
+@keyframes fx-ripple {
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes btn-barrido {
+  to {
+    transform: translateX(130%) skewX(-18deg);
+  }
+}
+
+@keyframes skeleton {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    translate: 0 26px;
+    scale: 0.97;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+}
+
+@keyframes wa-pop {
+  from {
+    opacity: 0;
+    scale: 0.5;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes wa-ring {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5, 1.9);
+  }
+}
+
+@keyframes scroll-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
   }
 }

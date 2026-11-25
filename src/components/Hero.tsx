@@ -38,7 +38,7 @@ export function Hero() {
         <div className="mt-4 flex flex-col gap-3 lg:mt-8 lg:flex-row lg:flex-wrap">
           <a
             href="#colecciones"
-            className="btn-shimmer inline-flex min-h-12 w-full items-center justify-center bg-royal px-5 text-xs tracking-[0.18em] text-ivory uppercase lg:w-auto"
+            data-magnetico className="btn-fx btn-primary inline-flex min-h-12 w-full items-center justify-center bg-royal px-5 text-xs tracking-[0.18em] text-ivory uppercase lg:w-auto"
             onClick={(event) => {
               event.preventDefault();
               scrollToId("colecciones");
@@ -51,7 +51,7 @@ export function Hero() {
             href={whatsappUrl(mensajeGeneral())}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-12 w-full items-center justify-center border border-gold-line px-5 text-xs tracking-[0.16em] text-ink uppercase lg:w-auto"
+            className="btn-fx btn-outline inline-flex min-h-12 w-full items-center justify-center border border-gold-line px-5 text-xs tracking-[0.16em] text-ink uppercase lg:w-auto"
           >
             {copy.hero.whatsapp}
           </a>

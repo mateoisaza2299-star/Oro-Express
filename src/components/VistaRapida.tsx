@@ -88,7 +88,7 @@ export default function VistaRapida({ producto, onClose }: Props) {
         <div className="relative px-5 py-6 md:overflow-y-auto md:px-8 md:py-8">
           <button
             type="button"
-            className="absolute top-3 right-3 inline-flex h-11 w-11 items-center justify-center text-ink"
+            className="btn-icono absolute top-3 right-3 inline-flex h-11 w-11 items-center justify-center text-ink"
             aria-label={copy.ui.cerrar}
             onClick={onClose}
           >
@@ -131,7 +131,7 @@ export default function VistaRapida({ producto, onClose }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             data-testid="whatsapp-consulta"
-            className="btn-shimmer mt-8 inline-flex min-h-12 items-center bg-royal px-5 text-xs tracking-[0.16em] text-ivory uppercase"
+            data-magnetico className="btn-fx btn-primary mt-8 inline-flex min-h-12 items-center bg-royal px-5 text-xs tracking-[0.16em] text-ivory uppercase"
           >
             <span className="relative z-10">{copy.vista.asesoria}</span>
             <span className="shimmer" aria-hidden="true" />
