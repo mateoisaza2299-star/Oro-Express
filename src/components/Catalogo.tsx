@@ -1,11 +1,14 @@
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
+import type { CSSProperties } from "react";
 import { copy } from "../content/es.ts";
 import { type Filtro, type Producto } from "../data/productos.ts";
-import { compararPiezas, useContenido } from "../lib/contenido.ts";
+import { compararPiezas, useCargandoContenido, useContenido } from "../lib/contenido.ts";
 import { fotoDe } from "../lib/imagen.ts";
 import { useLite } from "../lib/useLite.ts";
 import { Encabezado } from "./Encabezado.tsx";
+import { alCargarFoto, alMontarFoto } from "../lib/foto.ts";
 import { GlowCard } from "./GlowCard.tsx";
+import { CatalogoEsqueleto } from "./Esqueletos.tsx";
 
 type Props = {
   filtro: Filtro;
@@ -16,6 +19,8 @@ type Props = {
 export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
   const lite = useLite();
   const { categorias, productos } = useContenido();
+  const cargando = useCargandoContenido();
+  const reduce = useReducedMotion();
   const filtros: Filtro[] = ["Todos", ...categorias];
   const lista = filtro === "Todos" ? productos : productos.filter((producto) => producto.categoria === filtro);
   const visibles = primeroEnCategoria(lista);
@@ -39,11 +44,19 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                 type="button"
                 aria-pressed={activo}
                 data-testid={`filtro-${id}`}
-                className={`min-h-11 border px-4 text-xs tracking-[0.16em] uppercase ${
-                  activo ? "border-royal bg-royal text-ivory" : "border-gold-line bg-transparent text-ink"
+                className={`btn-fx btn-chip min-h-11 border px-4 text-xs tracking-[0.16em] uppercase ${
+                  activo ? "border-royal text-ivory" : "border-gold-line bg-transparent text-ink"
                 }`}
                 onClick={() => onFiltro(item)}
               >
+                {activo ? (
+                  <motion.span
+                    layoutId="filtro-activo"
+                    aria-hidden="true"
+                    className="absolute inset-0 -z-10 bg-royal"
+                    transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 36 }}
+                  />
+                ) : null}
                 {item === "Todos" ? copy.catalogo.todos : item}
               </button>
             );
@@ -52,17 +65,19 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
         <p className="sr-only" aria-live="polite">
           {visibles.length} {visibles.length === 1 ? copy.catalogo.una : copy.catalogo.varias}
         </p>
-        {visibles.length === 0 ? (
+        {cargando ? (
+          <CatalogoEsqueleto />
+        ) : visibles.length === 0 ? (
           <p role="status" className="text-base text-muted">
             {copy.catalogo.vacio}
           </p>
         ) : (
-          <ul className="grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-            {visibles.map((producto) => {
+          <ul key={filtro} className="grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+            {visibles.map((producto, indice) => {
               const foto = fotoDe(producto.imagen, producto.imagenUrl);
               const destacada = producto.destacada === true;
               return (
-                <li key={producto.id} className="flex">
+                <li key={producto.id} className="card-in flex" style={{ "--i": indice } as CSSProperties}>
                   <GlowCard
                     className={
                       destacada
@@ -77,7 +92,7 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                       onClick={() => onAbrir(producto)}
                     >
                       <span
-                        className={`relative block aspect-[4/5] shrink-0 overflow-hidden bg-paper ${
+                        className={`skeleton relative block aspect-[4/5] shrink-0 overflow-hidden ${
                           destacada ? "m-[6px] rounded-[2px]" : ""
                         }`}
                       >
@@ -99,7 +114,9 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                             sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 100vw"
                             loading="lazy"
                             decoding="async"
-                            className="absolute inset-0 h-full w-full object-cover"
+                            ref={alMontarFoto}
+                            onLoad={alCargarFoto}
+                            className="fade-img card-foto absolute inset-0 h-full w-full object-cover"
                           />
                         ) : null}
                         {foto && !lite ? (
@@ -110,7 +127,9 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                             loading="lazy"
                             decoding="async"
                             layoutId={`foto-${producto.id}`}
-                            className="absolute inset-0 h-full w-full object-cover"
+                            ref={alMontarFoto}
+                            onLoad={alCargarFoto}
+                            className="card-foto absolute inset-0 h-full w-full object-cover"
                             initial={{ opacity: 0, y: 12 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "0px 0px -40px 0px" }}
@@ -140,7 +159,7 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                               {producto.nombre}
                             </span>
                             <span className="mt-auto inline-flex min-h-11 items-center self-start">
-                              <span className="border-b border-gold-line pb-px text-xs tracking-[0.16em] text-muted uppercase">
+                              <span className="card-ver border-b border-gold-line pb-px text-xs tracking-[0.16em] text-muted uppercase">
                                 {copy.catalogo.ver}
                               </span>
                             </span>
@@ -167,7 +186,7 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                               <span className="text-xs tracking-[0.16em] text-ink uppercase">{producto.precio}</span>
                             </span>
                           </span>
-                          <span className="mt-auto block pt-3 text-xs tracking-[0.16em] text-muted uppercase">{copy.catalogo.ver}</span>
+                          <span className="card-ver mt-auto block pt-3 text-xs tracking-[0.16em] text-muted uppercase">{copy.catalogo.ver}</span>
                         </>
                       )}
                     </button>

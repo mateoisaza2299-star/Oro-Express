@@ -62,6 +62,25 @@ export function useContenido(): Contenido {
   return useSyncExternalStore(suscribir, leerContenido, () => local);
 }
 
+let cargandoRemoto = true;
+const oyentesCarga = new Set<() => void>();
+
+function suscribirCarga(oyente: () => void) {
+  oyentesCarga.add(oyente);
+  return () => oyentesCarga.delete(oyente);
+}
+
+/** true mientras llega el contenido de Supabase; sirve para mostrar esqueletos. */
+export function useCargandoContenido(): boolean {
+  return useSyncExternalStore(suscribirCarga, () => cargandoRemoto, () => false);
+}
+
+function terminarCarga() {
+  if (!cargandoRemoto) return;
+  cargandoRemoto = false;
+  oyentesCarga.forEach((oyente) => oyente());
+}
+
 let carga: Promise<void> | null = null;
 let ticket = 0;
 
@@ -83,6 +102,8 @@ async function cargarRemoto() {
     if (remoto) publicar(remoto);
   } catch {
     // Sin red o Supabase caído: se quedan los datos locales.
+  } finally {
+    terminarCarga();
   }
 }
 

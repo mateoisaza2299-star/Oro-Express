@@ -52,7 +52,7 @@ export function Header({ menuAbierto, onMenu, inert = false }: Props) {
             <a
               key={enlace.id}
               href={`#${enlace.id}`}
-              className="text-xs tracking-[0.18em] text-ink uppercase"
+              className="nav-link text-xs tracking-[0.18em] text-ink uppercase"
               onClick={(event) => {
                 event.preventDefault();
                 ir(enlace.id);

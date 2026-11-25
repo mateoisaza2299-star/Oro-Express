@@ -41,7 +41,7 @@ export function MenuMovil({ onClose }: Props) {
         <Logo nombre={nombre ?? "Salem"} className="h-12 w-auto" />
         <button
           type="button"
-          className="inline-flex h-12 w-12 items-center justify-center"
+          className="btn-icono inline-flex h-12 w-12 items-center justify-center"
           aria-label={copy.ui.cerrarMenu}
           onClick={onClose}
         >

@@ -32,7 +32,7 @@ export function WhatsappFlotante() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={copy.ui.whatsappFlotante}
-      className="fixed right-4 bottom-4 z-30 inline-flex min-h-12 items-center border border-gold-line bg-ivory px-4 text-xs tracking-[0.14em] text-ink uppercase md:hidden"
+      className="wa-pop btn-fx fixed right-4 bottom-4 z-30 inline-flex min-h-12 items-center border border-gold-line bg-ivory px-4 text-xs tracking-[0.14em] text-ink uppercase md:hidden"
     >
       {copy.ui.whatsappCorto}
     </a>
