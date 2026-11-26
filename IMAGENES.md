@@ -44,3 +44,7 @@ La versión `-640` de cada una usa el mismo recorte, a 640 px de ancho.
 ## Joyas nuevas (j01 a j11)
 
 `public/img/joyas/jNN.webp`: 11 fotos de anillos, sellos y pulseras (1000×1250, WebP calidad 82). Cada joya en Supabase apunta a su foto con `imagen_url`.
+
+## Fotos del dueño (anillos Salem)
+
+`flor-1`, `halo-1`, `halo-2`, `hoja-1`, `infinito-1`, `doble-1`, `catedral-1` y `fino-1` son fotos del dueño, sin logo, recortadas a 4:5 (928×1160 y versión de 640 px). `halo-1` y `halo-2` son la misma joya con dos piedras: la tarjeta del catálogo las va cambiando (`FotosRotativas`).

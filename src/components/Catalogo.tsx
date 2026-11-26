@@ -7,6 +7,7 @@ import { fotoDe } from "../lib/imagen.ts";
 import { useLite } from "../lib/useLite.ts";
 import { Encabezado } from "./Encabezado.tsx";
 import { alCargarFoto, alMontarFoto } from "../lib/foto.ts";
+import { FotosRotativas } from "./FotosRotativas.tsx";
 import { GlowCard } from "./GlowCard.tsx";
 import { CatalogoEsqueleto } from "./Esqueletos.tsx";
 
@@ -136,6 +137,7 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                           />
                         ) : null}
+                        <FotosRotativas galeria={producto.galeria} />
                       </span>
                       {destacada ? (
                         <>
