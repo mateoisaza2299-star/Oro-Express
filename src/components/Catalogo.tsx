@@ -5,6 +5,7 @@ import { compararPiezas, useContenido } from "../lib/contenido.ts";
 import { fotoDe } from "../lib/imagen.ts";
 import { useLite } from "../lib/useLite.ts";
 import { Encabezado } from "./Encabezado.tsx";
+import { FotosRotativas } from "./FotosRotativas.tsx";
 import { GlowCard } from "./GlowCard.tsx";
 
 type Props = {
@@ -117,6 +118,7 @@ export function Catalogo({ filtro, onFiltro, onAbrir }: Props) {
                             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                           />
                         ) : null}
+                        <FotosRotativas galeria={producto.galeria} />
                       </span>
                       {destacada ? (
                         <>

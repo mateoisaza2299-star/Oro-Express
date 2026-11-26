@@ -36,3 +36,7 @@ La versión `-640` de cada una usa el mismo recorte, a 640 px de ancho.
 ## Catálogo
 
 `src/data/productos.ts` usa `prod-01` a `prod-08`. El precio no se publica: se conversa por WhatsApp. No hay quilates ni certificaciones.
+
+## Fotos del dueño (anillos Salem)
+
+`flor-1`, `halo-1`, `halo-2`, `hoja-1`, `infinito-1`, `doble-1`, `catedral-1` y `fino-1` son fotos del dueño, sin logo, recortadas a 4:5 (928×1160 y versión de 640 px). `halo-1` y `halo-2` son la misma joya con dos piedras: la tarjeta del catálogo las va cambiando (`FotosRotativas`). `col-anillos` y `col-compromiso` usan `flor-1` y `catedral-1`.

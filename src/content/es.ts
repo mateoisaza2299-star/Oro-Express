@@ -90,6 +90,41 @@ export const copy = {
     recomendado: "Recomendado",
   },
   productos: {
+    "sal-flor": {
+      nombre: "Anillo flor de piedra verde",
+      frase: "Un halo en pétalos alrededor de la piedra.",
+      alt: "Anillo de oro amarillo con una piedra verde redonda rodeada de pétalos de brillantes y banda con pavé.",
+    },
+    "sal-halo": {
+      nombre: "Anillo halo",
+      frase: "Una piedra, un círculo de luz.",
+      alt: "Anillo de oro amarillo con una piedra central rodeada de un halo de brillantes y banda con pavé, en versión verde y clara.",
+    },
+    "sal-hoja": {
+      nombre: "Anillo de hojas",
+      frase: "Hojas pequeñas que abrazan la piedra.",
+      alt: "Anillo de oro amarillo con una piedra clara redonda y detalles de hojas con brillantes a los lados.",
+    },
+    "sal-infinito": {
+      nombre: "Anillo infinito",
+      frase: "Dos líneas de luz que se cruzan.",
+      alt: "Anillo de oro amarillo con dos bandas de brillantes que se cruzan formando un infinito.",
+    },
+    "sal-doble": {
+      nombre: "Solitario de banda doble",
+      frase: "Una piedra sobre dos hilos de luz.",
+      alt: "Anillo solitario de oro amarillo con una piedra clara en cuatro garras y banda doble con brillantes.",
+    },
+    "sal-catedral": {
+      nombre: "Solitario catedral",
+      frase: "La piedra sube sobre un aro limpio.",
+      alt: "Anillo solitario de oro amarillo con una piedra clara redonda en garras sobre un aro liso.",
+    },
+    "sal-fino": {
+      nombre: "Solitario fino",
+      frase: "Delgado, liviano, de todos los días.",
+      alt: "Anillo solitario de oro amarillo con banda delgada y una piedra clara redonda.",
+    },
     "prod-01": {
       nombre: "Anillo en cuatro garras",
       frase: "La piedra queda alta y quieta.",
